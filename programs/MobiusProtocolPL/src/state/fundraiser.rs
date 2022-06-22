@@ -20,6 +20,6 @@ pub struct Fundraiser {
   pub token_vault_bump: u8,
 }
 
-impl Game {
+impl Fundraiser {
   // leave empty
 }

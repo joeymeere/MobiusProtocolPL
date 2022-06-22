@@ -7,7 +7,7 @@ use spl_token::instruction::AuthorityType;
 #[derive(Accounts)]
 pub struct CreateCampaign<'info> {
   // define accounts taken in by the CreateGame instruction
-  #[account(init, payer = fundraiser, space = 8 + (32 * 3) + (16 * 2) + (8 * 2) + 1]
+  #[account(init, payer = fundraiser, space = 8 + (32 * 3) + (16 * 2) + (8 * 2) + 1)]
   pub fundraiser_config: Account<'info, Fundraiser>,
 
   #[account(mut)]
@@ -27,7 +27,7 @@ pub struct CreateCampaign<'info> {
   pub token_program: AccountInfo<'info>,
 }
 
-impl<'info> CreateGame<'info> {
+impl<'info> CreateCampaign<'info> {
   // implement required functions for CreateGame struct
 
   //not quite sure on this portion on how to set it up.. any pointers will be great!

@@ -12,6 +12,6 @@ pub struct Contributor {
   pub fundraiser: Pubkey,
 }
 
-impl Fund {
+impl Contributor {
   // leave empty
 }
