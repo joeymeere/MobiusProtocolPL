@@ -42,7 +42,7 @@ impl<'info> CreateCampaign<'info> {
     self.fundraiser_config.end_time = end;
     self.fundraiser_config.sol_qty = 0;
     self.fundraiser_config.usdc_qty = 0;
-    self.game_config.token_vault = *self.token_vault.to_account_info().key;
+    self.fundraiser_config.token_vault = *self.token_vault.to_account_info().key;
     self.fundraiser_config.token_vault_bump = token_vault_bump;
   }
 
