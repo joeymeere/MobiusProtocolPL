@@ -1,7 +1,7 @@
 use anchor_lang::prelude::*;
 
 use crate::state::*;
-use anchor_spl::token::{self, Mint, SetAuthority, TokenAccount, Transfer};
+use anchor_spl::token::{self, TokenAccount};
 use spl_token::instruction::AuthorityType;
 
 #[derive(Accounts)]
@@ -40,30 +40,33 @@ impl<'info> CreateGame<'info> {
     self.fundraiser_config.fundraiser = *self.fundraiser.to_account_info().key;
     self.fundraiser_config.start_time = start;
     self.fundraiser_config.end_time = end;
+    self.fundraiser_config.sol_qty = 0;
+    self.fundraiser_config.usdc_qty = 0;
     self.game_config.token_vault = *self.token_vault.to_account_info().key;
     self.fundraiser_config.token_vault_bump = token_vault_bump;
   }
 
-  fn set_authority_escrow(&self, program_id: &anchor_lang::prelude::Pubkey) {
-    const ESCROW_PDA_SEED: &[u8] = b"authority-seed";
-    let (vault_authority, _vault_authority_bump) = Pubkey::find_program_address(
-      &[
-        ESCROW_PDA_SEED,
-        self.game_config.to_account_info().key.as_ref(),
-      ],
-      program_id,
-    );
-    let cpi_accounts = SetAuthority {
-      account_or_mint: self.reward_escrow.to_account_info().clone(),
-      current_authority: self.host.to_account_info().clone(),
-    };
-    token::set_authority(
-      CpiContext::new(self.token_program.clone(), cpi_accounts),
-      AuthorityType::AccountOwner,
-      Some(vault_authority),
-    )
-    .unwrap();
-  }
+//   fn set_authority_escrow(&self, program_id: &anchor_lang::prelude::Pubkey) {
+//     const ESCROW_PDA_SEED: &[u8] = b"authority-seed";
+//     let (vault_authority, _vault_authority_bump) = Pubkey::find_program_address(
+//       &[
+//         ESCROW_PDA_SEED,
+//         self.game_config.to_account_info().key.as_ref(),
+//       ],
+//       program_id,
+//     );
+//     let cpi_accounts = SetAuthority {
+//       account_or_mint: self.reward_escrow.to_account_info().clone(),
+//       current_authority: self.host.to_account_info().clone(),
+//     };
+//     token::set_authority(
+//       CpiContext::new(self.token_program.clone(), cpi_accounts),
+//       AuthorityType::AccountOwner,
+//       Some(vault_authority),
+//     )
+//     .unwrap();
+//   }
+}
 
 pub fn handler(
   ctx: Context<CreateCampaign>, 
@@ -79,5 +82,5 @@ pub fn handler(
     token_vault_bump,
   );
 
-  ctx.accounts.set_authority_escrow(ctx.program_id);
+//   ctx.accounts.set_authority_escrow(ctx.program_id);
 }

@@ -6,10 +6,10 @@ pub struct Fundraiser {
   pub fundraiser: Pubkey,
   //contributor pubkey 
   pub contributor: Pubkey,
-  //no. of contributors for fundraising project 
-  pub contributors: u128,
-  // amount of contributions 
-  pub contributions: u128,
+  // amount of sol contributions 
+  pub sol_qty: u128,
+  // amount of usdc contributions 
+  pub usdc_qty: u128,
   //start of fundraising campaign
   pub start_time: u64,
   //end of fundraising campaign 
