@@ -66,29 +66,18 @@ impl<'info> CreateGame<'info> {
   }
 
 pub fn handler(
-  ctx: Context<CreateGame>, 
-  join: u64, 
+  ctx: Context<CreateCampaign>, 
   start: u64, 
   end: u64, 
-  start_usd: u64, 
-  winners: u8, 
-  max_players: u64,
-  reward_amount: u64,
-  reward_escrow_bump: u8,
+  token_vault_bump: u8,
 ) -> Result<()> {
   // core instruction to allow hosts to create a game account
   // must pass in required settings (join, start, end, rewards, etc) to game account
-  ctx.accounts.set_game_config(
-    join, 
+  ctx.accounts.set_fundraiser_config(
     start, 
     end, 
-    start_usd,
-    winners, 
-    max_players,
-    reward_amount,
-    reward_escrow_bump,
+    token_vault_bump,
   );
 
   ctx.accounts.set_authority_escrow(ctx.program_id);
-  ctx.accounts.transfer_host_reward(reward_amount)
 }
