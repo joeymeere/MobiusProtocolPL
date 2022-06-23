@@ -15,9 +15,8 @@ pub struct CreateCampaign<'info> {
 
   #[account(
       init,
-      seeds = [b"token-vault".as_ref(), fundraiser_config.to_account_info().key.as_ref()],
-      bump,
-      payer = host,
+      space = 9999,
+      payer = fundraiser,
   )]
   pub token_vault: Account<'info, TokenAccount>,
 
@@ -35,15 +34,13 @@ impl<'info> CreateCampaign<'info> {
     &mut self, 
     start: u64, 
     end: u64, 
-    token_vault_bump: u8,
   ) {
     self.fundraiser_config.fundraiser = *self.fundraiser.to_account_info().key;
     self.fundraiser_config.start_time = start;
     self.fundraiser_config.end_time = end;
     self.fundraiser_config.sol_qty = 0;
     self.fundraiser_config.usdc_qty = 0;
-    self.game_config.token_vault = *self.token_vault.to_account_info().key;
-    self.fundraiser_config.token_vault_bump = token_vault_bump;
+    self.fundraiser_config.token_vault = *self.token_vault.to_account_info().key;
   }
 
 //   fn set_authority_escrow(&self, program_id: &anchor_lang::prelude::Pubkey) {
@@ -72,15 +69,13 @@ pub fn handler(
   ctx: Context<CreateCampaign>, 
   start: u64, 
   end: u64, 
-  token_vault_bump: u8,
 ) -> Result<()> {
   // core instruction to allow hosts to create a game account
   // must pass in required settings (join, start, end, rewards, etc) to game account
   ctx.accounts.set_fundraiser_config(
     start, 
     end, 
-    token_vault_bump,
   );
-
+  Ok(())
 //   ctx.accounts.set_authority_escrow(ctx.program_id);
 }

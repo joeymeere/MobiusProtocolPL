@@ -16,8 +16,6 @@ pub struct Fundraiser {
   pub end_time: u64,
   //stores contributions from contributors
   pub token_vault: Pubkey,
-  // vault bump
-  pub token_vault_bump: u8,
 }
 
 impl Fundraiser {
