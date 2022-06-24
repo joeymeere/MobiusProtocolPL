@@ -52,13 +52,7 @@ impl <'info> StdContribute <'info> {
                 Ok(self.fundraiser.usdt_qty)
                 },
         }.unwrap();
-
-        let time_now = Clock::get().unwrap().unix_timestamp;
-
-        if time_now > fundraiser.end_time {
-            return Err(error!(ErrorCode::FundraiserEnded));
-        }
-        else {
+        
             let cpi_ctx = CpiContext::new(
                 ctx.accounts.token_program.to_account_info(),
                 token::Transfer {
