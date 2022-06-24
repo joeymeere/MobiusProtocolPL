@@ -13,8 +13,10 @@ pub struct StdContribution {
         seeds = [b"ILikeTurtles!".as_ref(), authority.key().as_ref()], 
         bump = contributor_account_bump, 
         payer = authority, 
-        space = 50)]
-        pub contributor: Account<'info, Contributor>,
+        space = 50
+        constraint = Clock::get().unwrap().unix_timestamp < fundraiser_config.end_time.try_into().unwrap(), 
+        )]
+        pub contributor_config: Account<'info, Contributor>,
 
         #[account(mut)]
         pub contributions: Account<'info, Contributor>,
