@@ -4,6 +4,8 @@ use anchor_lang::prelude::*;
 pub struct Contributor {
   //contributor pubkey
   pub contributor: Pubkey,
+  //contributor configuration
+  pub contributor_config: Pubkey,
   //contributions
   pub contributions: u128,
   //fund bump
