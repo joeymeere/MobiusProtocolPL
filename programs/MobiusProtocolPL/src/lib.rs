@@ -8,7 +8,7 @@ pub mod state;
 declare_id!("Fg6PaFpoGXkYsidMpWTK6W2BeZ7FEfcYkg476zPFsLnS");
 
 #[program]
-pub mod tradehaus {
+pub mod mobius_protocol_pl {
     use super::*;
 
     pub fn create_fundraiser(

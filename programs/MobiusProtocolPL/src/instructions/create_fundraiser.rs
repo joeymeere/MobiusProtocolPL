@@ -16,9 +16,6 @@ pub struct CreateCampaign<'info> {
   #[account(
       init,
       space = 9999,
-      seeds = [b"token-vault".as_ref(), fundraiser_config.to_account_info().key.as_ref()],
-      bump,
-      space = 8 + 16,
       payer = fundraiser,
   )]
   pub token_vault: Account<'info, TokenAccount>,
@@ -44,7 +41,6 @@ impl<'info> CreateCampaign<'info> {
     self.fundraiser_config.sol_qty = 0;
     self.fundraiser_config.usdc_qty = 0;
     self.fundraiser_config.token_vault = *self.token_vault.to_account_info().key;
-    self.fundraiser_config.token_vault_bump = token_vault_bump;
   }
 
 //   fn set_authority_escrow(&self, program_id: &anchor_lang::prelude::Pubkey) {
