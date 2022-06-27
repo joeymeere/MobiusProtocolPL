@@ -4,12 +4,15 @@ use anchor_lang::prelude::*;
 pub struct Fundraiser {
   //fundraiser pubkey
   pub fundraiser: Pubkey,
+
   //contributor pubkey 
   pub contributor: Pubkey,
   // amount of sol contributions 
-  pub sol_qty: u128,
+  pub sol_qty: u64,
   // amount of usdc contributions 
-  pub usdc_qty: u128,
+  pub usdc_qty: u64,
+
+  pub usdt_qty: u64,
   //start of fundraising campaign
   pub start_time: u64,
   //end of fundraising campaign 

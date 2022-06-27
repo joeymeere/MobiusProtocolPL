@@ -5,7 +5,7 @@ use instructions::*;
 pub mod instructions;
 pub mod state;
 
-declare_id!("Fg6PaFpoGXkYsidMpWTK6W2BeZ7FEfcYkg476zPFsLnS");
+declare_id!("3BBHkxoqwrspCjJ2tqaCAgeUPTBNcKFCWSy5DSQJEhz4");
 
 #[program]
 pub mod mobius_protocol_pl {
@@ -31,6 +31,7 @@ pub mod mobius_protocol_pl {
         select_token: u8 
     ) -> Result<()> {
         instructions::std_contribute::handler(
+            ctx,
             amount,
             select_token,  
         )
