@@ -1,1 +1,1 @@
-export * from './tradehaus.client';
+export * from './morbius.client';

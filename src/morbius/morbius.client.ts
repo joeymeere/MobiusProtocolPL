@@ -1,3 +1,5 @@
+import * as anchor from '@project-serum/anchor';
+import { BN, Idl, Program, AnchorProvider } from '@project-serum/anchor';
 import { Connection, Keypair, PublicKey, SystemProgram } from '@solana/web3.js';
 import {
     Account,
@@ -7,11 +9,11 @@ import {
 import { MobiusProtocolPl } from '../../target/types/mobius_protocol_pl';
 import { AccountUtils, toBN, isKp } from '../morbius-common';
 
-export class TradehausClient extends AccountUtils {
+export class MorbiusClient extends AccountUtils {
     // @ts-ignore
     wallet: anchor.Wallet;
     provider!: anchor.Provider;
-    tradehausProgram!: anchor.Program<Tradehaus>;
+    mobiusProgram!: anchor.Program<MobiusProtocolPl>;
 
     constructor(
         conn: Connection,
@@ -23,7 +25,7 @@ export class TradehausClient extends AccountUtils {
         super(conn);
         this.wallet = wallet;
         this.setProvider();
-        this.setTradehausProgram(idl, programId);
+        this.setMobiusProtocolPlProgram(idl, programId);
     }
 
     setProvider() {
@@ -35,11 +37,11 @@ export class TradehausClient extends AccountUtils {
         anchor.setProvider(this.provider);
     }
 
-    setTradehausProgram(idl?: Idl, programId?: PublicKey) {
+    setMobiusProtocolPlProgram(idl?: Idl, programId?: PublicKey) {
         //instantiating program depends on the environment
         if (idl && programId) {
             //means running in prod
-            this.tradehausProgram = new anchor.Program<Tradehaus>(
+            this.mobiusProgram = new anchor.Program<MobiusProtocolPl>(
                 idl as any,
                 programId,
                 this.provider
@@ -47,18 +49,18 @@ export class TradehausClient extends AccountUtils {
         } else {
             //means running inside test suite
             // @ts-ignore
-            this.tradehausProgram = anchor.workspace.Tradehaus as Program<Tradehaus>;
+            this.mobiusProgram = anchor.workspace.MobiusProtocolPl as Program<MobiusProtocolPl>;
         }
     }
 
     // --------------------------------------- fetch deserialized accounts
 
     async fetchGameAcc(game: PublicKey) {
-        return this.tradehausProgram.account.game.fetch(game);
+        return this.mobiusProgram.account.game.fetch(game);
     }
 
     async fetchFundAcc(fund: PublicKey) {
-        return this.tradehausProgram.account.fund.fetch(fund);
+        return this.mobiusProgram.account.fund.fetch(fund);
     }
 
     // --------------------------------------- find PDA addresses
@@ -66,7 +68,7 @@ export class TradehausClient extends AccountUtils {
     async findRewardEscrowPDA(gameConfig: PublicKey) {
         return await PublicKey.findProgramAddress(
             [Buffer.from(anchor.utils.bytes.utf8.encode("reward-escrow")), gameConfig.toBytes()],
-            this.tradehausProgram.programId
+            this.mobiusProgram.programId
         )
     }
 
@@ -77,7 +79,7 @@ export class TradehausClient extends AccountUtils {
             player.toBytes(),
             gameConfig.toBytes()
             ],
-            this.tradehausProgram.programId
+            this.mobiusProgram.programId
         )
     }
 
