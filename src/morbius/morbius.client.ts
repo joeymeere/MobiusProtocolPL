@@ -55,12 +55,12 @@ export class MorbiusClient extends AccountUtils {
 
     // --------------------------------------- fetch deserialized accounts
 
-    async fetchGameAcc(game: PublicKey) {
-        return this.mobiusProgram.account.game.fetch(game);
+    async fetchFundraiserAcc(fundraiser: PublicKey) {
+        return this.mobiusProgram.account.fundraiser.fetch(fundraiser);
     }
 
-    async fetchFundAcc(fund: PublicKey) {
-        return this.mobiusProgram.account.fund.fetch(fund);
+    async fetchContributorAcc(contributor: PublicKey) {
+        return this.mobiusProgram.account.contributor.fetch(contributor);
     }
 
     // --------------------------------------- find PDA addresses
@@ -87,7 +87,7 @@ export class MorbiusClient extends AccountUtils {
 
     // --------------------------------------- breed ops ixs
 
-    async createGame(
+    async createFundraiser(
         gameConfig: Keypair,
         host: PublicKey | Keypair,
         hostRewardAccount: PublicKey,
