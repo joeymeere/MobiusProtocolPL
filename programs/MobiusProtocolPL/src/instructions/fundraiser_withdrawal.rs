@@ -11,7 +11,6 @@ pub struct Withdrawal<'info> {
     #[account(
         init, 
         payer = withdrawer,
-        seeds
         space = size_of::<fundraiser>() + 8
     )]
     pub Fundraiser: Account<'info, Fundraiser>,
@@ -29,7 +28,7 @@ pub struct Withdrawal<'info> {
 
     #[account(
         mut,
-        constraint=wallet_to_withdraw_from.owner == withdrawer.key(), // this ensures that no shady shit happens and that nobody exploits the withdraw
+        constraint = Fundraiser.fundraiser = wallet_to_withdraw_to.key(), // ensures that no shady stuff happens, security check (only one who can withdraw is fundraiser creator)
         constraint=wallet_to_withdraw_from.mint == mint_of_token_being_sent.key() // some minting stuff i saw
     )]
 
@@ -103,7 +102,7 @@ impl<'info> Withdrawal<'info> {
 
     }
 
-    pub fn transfer_to_escrow(&mut self, select_token: u8) {
+    pub fn escrow_to_withdrawer(&mut self, select_token: u8) {
 
         let mint_of_token_being_sent_pk = ctx.accounts.mint_of_token_being_sent.key().clone();
 
@@ -147,7 +146,7 @@ impl<'info> Withdrawal<'info> {
             3 => {
                 self.Withdrawer.sol_qty += self.Fundraiser.usdt_qty;
                 Ok(self.Withdrawer.usdt_qty);
-                anchor_spl::token::transfer(cpi_ctx, self.Fundraiser.usdt_qty)?;
+                anchor_spl::token::transfer(cpi_ctx, self.Fundraiser.usdt_qty)?; 
                 },
 
         }.unwrap();
@@ -157,6 +156,9 @@ impl<'info> Withdrawal<'info> {
 
 }
 
-pub fn Handler(ctx: Context<Withdrawal>, select_token: u8) {
+pub fn handler(ctx: Context<Withdrawal>, select_token: u8) {
+
+    ctx.accounts.transfer_to_escrow(select_token);
+    ctx.accounts.escrow_to_withdrawer(select_token);
 
 }
