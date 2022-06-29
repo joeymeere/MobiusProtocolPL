@@ -62,12 +62,34 @@ describe("morbius", () => {
       [fundraiser]
     );
     // create host & players reward token accounts
-    hostTokenAccountReward = await createAssociatedTokenAccount(
+    fundraiserTokenAccount = await createAssociatedTokenAccount(
       provider.connection,
-      host,
-      mintReward,
-      host.publicKey
+      fundraiser,
+      ,
+      fundraiser.publicKey
     );
+
+    contributor1TokenAccount = await createAssociatedTokenAccount(
+      provider.connection,
+      contributor1,
+      ,
+      contributor1.publicKey
+    );
+
+    contributor2TokenAccount = await createAssociatedTokenAccount(
+      provider.connection,
+      contributor2,
+      ,
+      contributor2.publicKey
+    );
+
+    contributor3TokenAccount = await createAssociatedTokenAccount(
+      provider.connection,
+      contributor3,
+      ,
+      contributor3.publicKey
+    );
+
   });
 
 
