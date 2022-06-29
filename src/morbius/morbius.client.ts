@@ -88,42 +88,24 @@ export class MorbiusClient extends AccountUtils {
     // --------------------------------------- breed ops ixs
 
     async createFundraiser(
-        gameConfig: Keypair,
-        host: PublicKey | Keypair,
-        hostRewardAccount: PublicKey,
-        rewardMint: PublicKey,
-        rewardEscrow: PublicKey,
-        join: number,
+        fundraiserConfig: Keypair,
+        fundraiser: PublicKey | Keypair,
+        tokenVault: PublicKey,
         start: number,
         end: number,
-        startUsd: number,
-        winners: number,
-        maxPlayers: number,
-        rewardAmount: number,
-        rewardEscrowBump: number
     ) {
-        const signers = [gameConfig];
-        if (isKp(host)) signers.push(<Keypair>host)
-        const txSig = await this.tradehausProgram.methods.createGame(
-            toBN(join),
+        const signers = [fundraiserConfig];
+        if (isKp(fundraiser)) signers.push(<Keypair>fundraiser)
+        const txSig = await this.mobiusProgram.methods.createFundraiser(
             toBN(start),
             toBN(end),
-            toBN(startUsd),
-            winners,
-            toBN(maxPlayers),
-            toBN(rewardAmount),
-            rewardEscrowBump
         ).accounts({
-            gameConfig: gameConfig.publicKey,
-            host: isKp(host) ? (<Keypair>host).publicKey : host,
-            hostRewardAccount,
-            rewardMint,
-            rewardEscrow,
+            fundraiserConfig: fundraiserConfig.publicKey,
+            fundraiser: isKp(fundraiser) ? (<Keypair>fundraiser).publicKey : fundraiser,
             systemProgram: SystemProgram.programId,
             rent: anchor.web3.SYSVAR_RENT_PUBKEY
         }).signers(signers)
             .rpc();
-
         return { txSig };
     }
 
