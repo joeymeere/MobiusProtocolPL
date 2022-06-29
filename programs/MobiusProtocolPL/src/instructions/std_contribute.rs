@@ -1,8 +1,7 @@
 use anchor_lang::prelude::*;
-use anchor_lang::solana_program::{clock, program_option::COption, sysvar};
+//use anchor_lang::solana_program::{clock, program_option::COption, sysvar};
 use anchor_spl::token::{self, Token, Mint, TokenAccount, Transfer};
 use crate::state::*;
-use crate::create_fundraiser::*;
 
 #[derive(Accounts)]
 pub struct StdContribute<'info> {
@@ -29,62 +28,52 @@ pub struct StdContribute<'info> {
     }
 
 
-impl <'info> StdContribute<'info> {
-    fn contribute(&mut self, amount: u64, select_token: u8) -> Result<()> {
+impl<'info> StdContribute<'info> {
+    fn contribute(&mut self, amount: u64, select_token: u8) {
         match select_token {
-            1 => {
+              1 => {
                 self.fundraiser_config.sol_qty += amount;
                 Ok(self.fundraiser_config.sol_qty)
-                },
-
-            2 => {
+              },
+              2 => {
                 self.fundraiser_config.usdc_qty += amount;
                 Ok(self.fundraiser_config.usdc_qty)
-                },
-
-            3 => {
+              },
+              3 => {
                 self.fundraiser_config.usdt_qty += amount;
                 Ok(self.fundraiser_config.usdt_qty)
-                },
-        }.unwrap();
+              },
+              _ => Err(ProgramError::Custom(1)),
+            }.unwrap();
     
-        /* 
-            let cpi_ctx = CpiContext::new(
-                self.token_program.to_account_info(),
-                token::Transfer {
-                    from: self.contributor.to_account_info(),
-                    to: self.fundraiser_config.token_vault.to_account_info(),
-                    authority: self.contributor.to_account_info(), 
-                },
-              
-            );
-            token::transfer(cpi_ctx, amount)?;
-        */
+            self.transfer_contribution(amount);
 
-    fn transfer_contribution(&self, amount: u64) -> Result<()> {
+        }
+
+    fn transfer_contribution(&mut self, amount: u64) {
                 let sender = &self.contributor;
                 let sender_of_tokens = &self.contributor_token_account;
                 let recipient_of_tokens = &self.token_vault;
                 let token_program = &self.token_program;
             
                 let context = Transfer {
-                  from: sender_of_tokens.to_account_info(),
-                  to: recipient_of_tokens.to_account_info(),
-                  authority: sender.to_account_info(),
-                };
-            
+                    from: sender_of_tokens.to_account_info(),
+                    to: recipient_of_tokens.to_account_info(),
+                    authority: sender.to_account_info(),
+                  };
+  
                 token::transfer(
-                  CpiContext::new(token_program.to_account_info(), context),
-                  amount,
-                )
+                CpiContext::new(token_program.to_account_info(), context),
+                    amount,
+                    ).expect("failed to transfer");
+                
               }
-           Ok(())
-            }
     }
 
 
-pub fn handler(ctx: Context<StdContribute>, amount: u64, select_token: u8) -> Result<()> {
+pub fn handler(ctx: Context<StdContribute>, amount: u64, select_token: u8) {
     ctx.accounts.contribute(amount, select_token);
 
-    Ok(())
+    ctx.accounts.transfer_contribution(amount);
+
 }
