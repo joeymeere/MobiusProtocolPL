@@ -36,7 +36,7 @@ impl<'info> CreateCampaign<'info> {
     &mut self, 
     start: u64, 
     end: u64, 
-    reward_escrow_bump: u8,
+    token_vault_bump: u8,
   ) {
     self.fundraiser_config.fundraiser = *self.fundraiser.to_account_info().key;
     self.fundraiser_config.start_time = start;
@@ -44,7 +44,7 @@ impl<'info> CreateCampaign<'info> {
     self.fundraiser_config.sol_qty = 0;
     self.fundraiser_config.usdc_qty = 0;
     self.fundraiser_config.token_vault = *self.token_vault.to_account_info().key;
-    self.fundraiser_config.token_vault_bump = reward_escrow_bump;
+    self.fundraiser_config.token_vault_bump = token_vault_bump;
   }
 
   fn set_authority_token_vault(&self, program_id: &anchor_lang::prelude::Pubkey) {
@@ -73,14 +73,14 @@ pub fn handler(
   ctx: Context<CreateCampaign>, 
   start: u64, 
   end: u64, 
-  reward_escrow_bump: u8,
+  token_vault_bump: u8,
 ) -> Result<()> {
   // core instruction to allow hosts to create a game account
   // must pass in required settings (join, start, end, rewards, etc) to game account
   ctx.accounts.set_fundraiser_config(
     start, 
     end, 
-    reward_escrow_bump,
+    token_vault_bump,
   );
   ctx.accounts.set_authority_token_vault(ctx.program_id);
   Ok(())
