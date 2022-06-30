@@ -82,23 +82,15 @@ describe("morbius", () => {
 
     const _START_TIME = Math.ceil(Date.now() / 1000 + 5)
 
-    await th.createGame(
-      gameConfig,
-      host,
-      hostTokenAccountReward,
-      mintReward,
-      reward_escrow_pda,
-      1,
+    await th.createFundraiser(
+      fundraiserConfig,
+      fundraiser,
+      tokenVault,
       _START_TIME,
       2000000000,
-      100000,
-      3,
-      3,
-      30,
-      reward_escrow_bump
     );
 
-    const gameAcc = await th.fetchGameAcc(gameConfig.publicKey);
+    const fundraiserAcc = await th.fetchFundraiserAcc(fundraiserConfig.publicKey);
     let _rewardEscrow = await getAccount(
       provider.connection,
       reward_escrow_pda

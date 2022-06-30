@@ -102,6 +102,7 @@ export class MorbiusClient extends AccountUtils {
         ).accounts({
             fundraiserConfig: fundraiserConfig.publicKey,
             fundraiser: isKp(fundraiser) ? (<Keypair>fundraiser).publicKey : fundraiser,
+            tokenVault,
             systemProgram: SystemProgram.programId,
             rent: anchor.web3.SYSVAR_RENT_PUBKEY
         }).signers(signers)
