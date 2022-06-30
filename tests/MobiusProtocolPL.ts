@@ -20,12 +20,10 @@ describe("morbius", () => {
   let fundraiserTokenAccount = null;
   let contributor1TokenAccount = null;
   let contributor2TokenAccount = null;
-  let contributor3TokenAccount = null;
 
   const fundraiser = anchor.web3.Keypair.generate();
   const contributor1 = anchor.web3.Keypair.generate();
   const contributor2 = anchor.web3.Keypair.generate();
-  const contributor3 = anchor.web3.Keypair.generate();
 
   const fundraiserConfig = anchor.web3.Keypair.generate();
 
@@ -51,11 +49,6 @@ describe("morbius", () => {
             toPubkey: contributor2.publicKey,
             lamports: 100000000,
           }),
-          SystemProgram.transfer({
-            fromPubkey: fundraiser.publicKey,
-            toPubkey: contributor3.publicKey,
-            lamports: 100000000,
-          }),
         );
         return tx;
       })(),
@@ -65,32 +58,88 @@ describe("morbius", () => {
     fundraiserTokenAccount = await createAssociatedTokenAccount(
       provider.connection,
       fundraiser,
-      ,
+      null,
       fundraiser.publicKey
     );
 
     contributor1TokenAccount = await createAssociatedTokenAccount(
       provider.connection,
       contributor1,
-      ,
+      null,
       contributor1.publicKey
     );
 
     contributor2TokenAccount = await createAssociatedTokenAccount(
       provider.connection,
       contributor2,
-      ,
+      null,
       contributor2.publicKey
     );
+  });
 
-    contributor3TokenAccount = await createAssociatedTokenAccount(
-      provider.connection,
-      contributor3,
-      ,
-      contributor3.publicKey
+  it('creates fundraiser', async () => {
+    const [reward_escrow_pda, reward_escrow_bump] = await th.findRewardEscrowPDA(gameConfig.publicKey);
+
+    const _START_TIME = Math.ceil(Date.now() / 1000 + 5)
+
+    await th.createGame(
+      gameConfig,
+      host,
+      hostTokenAccountReward,
+      mintReward,
+      reward_escrow_pda,
+      1,
+      _START_TIME,
+      2000000000,
+      100000,
+      3,
+      3,
+      30,
+      reward_escrow_bump
     );
 
+    const gameAcc = await th.fetchGameAcc(gameConfig.publicKey);
+    let _rewardEscrow = await getAccount(
+      provider.connection,
+      reward_escrow_pda
+    );
+
+    let _hostTokenAccountReward = await getAccount(
+      provider.connection,
+      hostTokenAccountReward
+    );
+
+    assert.equal(gameAcc.host.toBase58(), host.publicKey.toBase58())
+    assert.equal(gameAcc.hostRewardAccount.toBase58(), hostTokenAccountReward.toBase58())
+    assert.equal(gameAcc.rewardMint.toBase58(), mintReward.toBase58())
+    assert.equal(gameAcc.rewardEscrow.toBase58(), reward_escrow_pda.toBase58())
+
+    assert.ok(gameAcc.rewardAmount.toNumber() == 30)
+    assert.ok(gameAcc.joinTime.toNumber() == 1)
+    assert.ok(gameAcc.startTime.toNumber() == _START_TIME)
+    assert.ok(gameAcc.endTime.toNumber() == 2000000000)
+    assert.ok(gameAcc.startUsd.toNumber() == 100000)
+    assert.ok(gameAcc.currentCap.toNumber() == 0)
+    assert.ok(gameAcc.maxCap.toNumber() == 3)
+    assert.ok(gameAcc.winners == 3)
+    assert.ok(gameAcc.rewardEscrowBump == reward_escrow_bump)
+
+    const [_vault_authority_pda, _vault_authority_bump] = await PublicKey.findProgramAddress(
+      [
+        Buffer.from(anchor.utils.bytes.utf8.encode("authority-seed")),
+        gameConfig.publicKey.toBytes()
+      ],
+      th.tradehausProgram.programId
+    );
+
+    assert.ok(Number(_hostTokenAccountReward.amount) == 0);
+    assert.ok(_rewardEscrow.owner.equals(_vault_authority_pda));
+    assert.ok(Number(_rewardEscrow.amount) == 30);
+
+
   });
+
+
 
 
 
