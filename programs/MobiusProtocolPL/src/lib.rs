@@ -15,11 +15,13 @@ pub mod mobius_protocol_pl {
         ctx: Context<CreateCampaign>, 
         start: u64, 
         end: u64, 
+        reward_escrow_bump: u8,
     ) -> Result<()> {
         instructions::create_fundraiser::handler(
             ctx, 
             start, 
             end, 
+            reward_escrow_bump,
         )
     }
 }
