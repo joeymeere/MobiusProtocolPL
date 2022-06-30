@@ -7,9 +7,9 @@ import {
     TOKEN_PROGRAM_ID,
 } from '@solana/spl-token';
 import { MobiusProtocolPl } from '../../target/types/mobius_protocol_pl';
-import { AccountUtils, toBN, isKp } from '../morbius-common';
+import { AccountUtils, toBN, isKp } from '../mobius-common';
 
-export class MorbiusClient extends AccountUtils {
+export class MobiusClient extends AccountUtils {
     // @ts-ignore
     wallet: anchor.Wallet;
     provider!: anchor.Provider;

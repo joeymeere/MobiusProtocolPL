@@ -6,7 +6,7 @@ import { TOKEN_PROGRAM_ID, createMint, createAssociatedTokenAccount, mintTo, get
 import chai, { assert, AssertionError, expect } from 'chai';
 import chaiAspromised from 'chai-as-promised';
 
-import { MorbuisClient } from '../src';
+import { MobiusClient } from '../src';
 
 chai.use(chaiAspromised);
 
@@ -15,7 +15,7 @@ describe("morbius", () => {
   const provider = anchor.AnchorProvider.env();
   anchor.setProvider(provider);
 
-  const th = new MorbuisClient(provider.connection, provider.wallet as any)
+  const th = new MobiusClient(provider.connection, provider.wallet as any)
 
   let fundraiserTokenAccount = null;
   let contributor1TokenAccount = null;
