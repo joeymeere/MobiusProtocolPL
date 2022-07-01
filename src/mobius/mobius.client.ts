@@ -93,12 +93,14 @@ export class MobiusClient extends AccountUtils {
         tokenVault: PublicKey,
         start: number,
         end: number,
+        tokenVaultBump: number,
     ) {
         const signers = [fundraiserConfig];
         if (isKp(fundraiser)) signers.push(<Keypair>fundraiser)
         const txSig = await this.mobiusProgram.methods.createFundraiser(
             toBN(start),
             toBN(end),
+            tokenVaultBump,
         ).accounts({
             fundraiserConfig: fundraiserConfig.publicKey,
             fundraiser: isKp(fundraiser) ? (<Keypair>fundraiser).publicKey : fundraiser,

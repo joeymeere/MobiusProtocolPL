@@ -78,27 +78,28 @@ describe("morbius", () => {
   });
 
   it('creates fundraiser', async () => {
-    const [reward_escrow_pda, reward_escrow_bump] = await th.findRewardEscrowPDA(gameConfig.publicKey);
+    const [token_vault_pda, token_vault_bump] = await th.findRewardEscrowPDA(fundraiserConfig.publicKey);
 
     const _START_TIME = Math.ceil(Date.now() / 1000 + 5)
 
     await th.createFundraiser(
       fundraiserConfig,
       fundraiser,
-      tokenVault,
+      token_vault_pda,
       _START_TIME,
       2000000000,
+      token_vault_bump,
     );
 
     const fundraiserAcc = await th.fetchFundraiserAcc(fundraiserConfig.publicKey);
-    let _rewardEscrow = await getAccount(
+    let _tokenVault = await getAccount(
       provider.connection,
-      reward_escrow_pda
+      token_vault_pda
     );
 
     let _hostTokenAccountReward = await getAccount(
       provider.connection,
-      hostTokenAccountReward
+      hostTokenAccount
     );
 
     assert.equal(gameAcc.host.toBase58(), host.publicKey.toBase58())

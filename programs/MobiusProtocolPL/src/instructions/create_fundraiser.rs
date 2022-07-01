@@ -13,6 +13,9 @@ pub struct CreateCampaign<'info> {
   #[account(mut)]
   pub fundraiser: Signer<'info>,
 
+  #[account(init, payer = fundraiser, space = 9999)]
+  pub fundraiser_token_account: Account<'info, TokenAccount>,
+
   #[account(
       init,
       seeds = [b"token-vault".as_ref(), fundraiser_config.to_account_info().key.as_ref()],
