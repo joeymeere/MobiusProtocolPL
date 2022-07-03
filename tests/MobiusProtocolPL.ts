@@ -35,8 +35,27 @@ describe("morbius", () => {
     //airdrop to fundraiser 
     await provider.connection.confirmTransaction(
       await provider.connection.requestAirdrop(fundraiser.publicKey, 1000000000),
-      "confirmed"
+      "processed"
     );
+    // const airDropSol = async () => {
+    //   try {
+    //     const connection = new Connection(clusterApiUrl("devnet"), "confirmed");
+    //     const airdropSignature = await connection.requestAirdrop(
+    //       keypair.publicKey,
+    //       2 * LAMPORTS_PER_SOL
+    //     );
+
+    //     const latestBlockHash = await connection.getLatestBlockhash();
+
+    //     await connection.confirmTransaction({
+    //       blockhash: latestBlockHash.blockhash,
+    //       lastValidBlockHeight: latestBlockHash.lastValidBlockHeight,
+    //       signature: airdropSignature,
+    //     });
+    //   } catch (error) {
+    //     console.error(error);
+    //   }
+    // };
 
     //fund contributors account
     await provider.sendAndConfirm(
