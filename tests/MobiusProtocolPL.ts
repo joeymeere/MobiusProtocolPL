@@ -21,6 +21,10 @@ describe("morbius", () => {
   let contributor1TokenAccount = null;
   let contributor2TokenAccount = null;
 
+  let token_vault_pda: PublicKey = null; // escrow account stores reward tokens
+  let token_vault_bump: number = null;
+  let token_vault_authority_pda = null;
+
   const fundraiser = anchor.web3.Keypair.generate();
   const contributor1 = anchor.web3.Keypair.generate();
   const contributor2 = anchor.web3.Keypair.generate();
@@ -78,7 +82,7 @@ describe("morbius", () => {
   });
 
   it('creates fundraiser', async () => {
-    const [token_vault_pda, token_vault_bump] = await th.findRewardEscrowPDA(fundraiserConfig.publicKey);
+    const [token_vault_pda, token_vault_bump] = await th.findTokenVaultPDA(fundraiserConfig.publicKey);
 
     const _START_TIME = Math.ceil(Date.now() / 1000 + 5)
 
@@ -91,45 +95,38 @@ describe("morbius", () => {
       token_vault_bump,
     );
 
+    // this test is for 'set_fundraiser_config' function
     const fundraiserAcc = await th.fetchFundraiserAcc(fundraiserConfig.publicKey);
     let _tokenVault = await getAccount(
       provider.connection,
       token_vault_pda
     );
 
-    let _hostTokenAccountReward = await getAccount(
-      provider.connection,
-      hostTokenAccount
-    );
+    // let _hostTokenAccountReward = await getAccount(
+    //   provider.connection,
+    //   hostTokenAccount
+    // );
 
-    assert.equal(gameAcc.host.toBase58(), host.publicKey.toBase58())
-    assert.equal(gameAcc.hostRewardAccount.toBase58(), hostTokenAccountReward.toBase58())
-    assert.equal(gameAcc.rewardMint.toBase58(), mintReward.toBase58())
-    assert.equal(gameAcc.rewardEscrow.toBase58(), reward_escrow_pda.toBase58())
+    assert.equal(fundraiserAcc.fundraiser.toBase58(), fundraiser.publicKey.toBase58())
+    // assert.equal(fundraiserAcc.hostRewardAccount.toBase58(), hostTokenAccountReward.toBase58())
+    assert.equal(fundraiserAcc.tokenVault.toBase58(), token_vault_pda.toBase58())
 
-    assert.ok(gameAcc.rewardAmount.toNumber() == 30)
-    assert.ok(gameAcc.joinTime.toNumber() == 1)
-    assert.ok(gameAcc.startTime.toNumber() == _START_TIME)
-    assert.ok(gameAcc.endTime.toNumber() == 2000000000)
-    assert.ok(gameAcc.startUsd.toNumber() == 100000)
-    assert.ok(gameAcc.currentCap.toNumber() == 0)
-    assert.ok(gameAcc.maxCap.toNumber() == 3)
-    assert.ok(gameAcc.winners == 3)
-    assert.ok(gameAcc.rewardEscrowBump == reward_escrow_bump)
+    assert.ok(fundraiserAcc.startTime.toNumber() == _START_TIME)
+    assert.ok(fundraiserAcc.endTime.toNumber() == 2000000000)
+    assert.ok(fundraiserAcc.tokenVaultBump == token_vault_bump)
 
+    // this test is for 'set_authority_token_vault' function
     const [_vault_authority_pda, _vault_authority_bump] = await PublicKey.findProgramAddress(
       [
         Buffer.from(anchor.utils.bytes.utf8.encode("authority-seed")),
-        gameConfig.publicKey.toBytes()
+        fundraiserConfig.publicKey.toBytes()
       ],
-      th.tradehausProgram.programId
+      th.mobiusProgram.programId
     );
 
-    assert.ok(Number(_hostTokenAccountReward.amount) == 0);
-    assert.ok(_rewardEscrow.owner.equals(_vault_authority_pda));
-    assert.ok(Number(_rewardEscrow.amount) == 30);
-
-
+    // assert.ok(Number(_hostTokenAccountReward.amount) == 0);
+    assert.ok(_tokenVault.owner.equals(_vault_authority_pda));
+    // assert.ok(Number(_rewardEscrow.amount) == 30);
   });
 
 

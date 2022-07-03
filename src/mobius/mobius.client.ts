@@ -65,23 +65,23 @@ export class MobiusClient extends AccountUtils {
 
     // --------------------------------------- find PDA addresses
 
-    async findRewardEscrowPDA(gameConfig: PublicKey) {
+    async findTokenVaultPDA(fundraiserConfig: PublicKey) {
         return await PublicKey.findProgramAddress(
-            [Buffer.from(anchor.utils.bytes.utf8.encode("reward-escrow")), gameConfig.toBytes()],
+            [Buffer.from(anchor.utils.bytes.utf8.encode("token-vault")), fundraiserConfig.toBytes()],
             this.mobiusProgram.programId
         )
     }
 
-    async findPlayerFundPDA(player: PublicKey, gameConfig: PublicKey) {
-        return await PublicKey.findProgramAddress(
-            [Buffer.from(
-                anchor.utils.bytes.utf8.encode("player-fund")),
-            player.toBytes(),
-            gameConfig.toBytes()
-            ],
-            this.mobiusProgram.programId
-        )
-    }
+    // async findPlayerFundPDA(player: PublicKey, gameConfig: PublicKey) {
+    //     return await PublicKey.findProgramAddress(
+    //         [Buffer.from(
+    //             anchor.utils.bytes.utf8.encode("player-fund")),
+    //         player.toBytes(),
+    //         gameConfig.toBytes()
+    //         ],
+    //         this.mobiusProgram.programId
+    //     )
+    // }
 
     // --------------------------------------- find all PDA addresses
 
@@ -112,53 +112,53 @@ export class MobiusClient extends AccountUtils {
         return { txSig };
     }
 
-    async joinGame(
-        gameConfig: PublicKey,
-        player: PublicKey | Keypair,
-        playerFund: PublicKey,
-        playerFundBump: number
-    ) {
-        const signers = [];
-        if (isKp(player)) signers.push(<Keypair>player)
-        const txSig = await this.tradehausProgram.methods.joinGame(
-            playerFundBump
-        ).accounts({
-            gameConfig: gameConfig,
-            player: isKp(player) ? (<Keypair>player).publicKey : player,
-            playerFund,
-            systemProgram: SystemProgram.programId
-        }).signers(signers)
-            .rpc();
+    // async joinGame(
+    //     gameConfig: PublicKey,
+    //     player: PublicKey | Keypair,
+    //     playerFund: PublicKey,
+    //     playerFundBump: number
+    // ) {
+    //     const signers = [];
+    //     if (isKp(player)) signers.push(<Keypair>player)
+    //     const txSig = await this.tradehausProgram.methods.joinGame(
+    //         playerFundBump
+    //     ).accounts({
+    //         gameConfig: gameConfig,
+    //         player: isKp(player) ? (<Keypair>player).publicKey : player,
+    //         playerFund,
+    //         systemProgram: SystemProgram.programId
+    //     }).signers(signers)
+    //         .rpc();
 
-        return { txSig };
-    }
+    //     return { txSig };
+    // }
 
-    async swapItems(
-        playerFund: PublicKey,
-        player: PublicKey | Keypair,
-        gameConfig: PublicKey,
-        amount: number,
-        sellCoin: number,
-        buyCoin: number,
-    ) {
-        //whenever, this function is called
-        //check if player is keypair or publickey 
-        // if it is, push it onto an array/list to store it
-        //however, will this double count? 
-        const signers = [];
-        if (isKp(player)) signers.push(<Keypair>player)
-        const txSig = await this.tradehausProgram.methods.swapItems(
-            toBN(amount),
-            toBN(sellCoin),
-            toBN(buyCoin),
-        ).accounts({
-            playerFund,
-            player: isKp(player) ? (<Keypair>player).publicKey : player,
-            gameConfig: gameConfig,
-            systemProgram: SystemProgram.programId
-        }).signers(signers)
-            .rpc();
+    // async swapItems(
+    //     playerFund: PublicKey,
+    //     player: PublicKey | Keypair,
+    //     gameConfig: PublicKey,
+    //     amount: number,
+    //     sellCoin: number,
+    //     buyCoin: number,
+    // ) {
+    //     //whenever, this function is called
+    //     //check if player is keypair or publickey 
+    //     // if it is, push it onto an array/list to store it
+    //     //however, will this double count? 
+    //     const signers = [];
+    //     if (isKp(player)) signers.push(<Keypair>player)
+    //     const txSig = await this.tradehausProgram.methods.swapItems(
+    //         toBN(amount),
+    //         toBN(sellCoin),
+    //         toBN(buyCoin),
+    //     ).accounts({
+    //         playerFund,
+    //         player: isKp(player) ? (<Keypair>player).publicKey : player,
+    //         gameConfig: gameConfig,
+    //         systemProgram: SystemProgram.programId
+    //     }).signers(signers)
+    //         .rpc();
 
-        return { txSig };
-    }
+    //     return { txSig };
+    // }
 }
