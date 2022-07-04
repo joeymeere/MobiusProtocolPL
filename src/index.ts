@@ -4,5 +4,5 @@ export * from './mobius';
 export * from './mobius-common';
 
 export const MOBIUS_PROG_ID = new PublicKey(
-    '3BBHkxoqwrspCjJ2tqaCAgeUPTBNcKFCWSy5DSQJEhz4'
+    'TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA'
 );

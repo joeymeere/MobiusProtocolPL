@@ -1,7 +1,7 @@
 import * as anchor from "@project-serum/anchor";
 import { Program } from "@project-serum/anchor";
 import { MobiusProtocolPl } from "../target/types/mobius_protocol_pl";
-import { PublicKey, SystemProgram, Transaction, LAMPORTS_PER_SOL } from '@solana/web3.js';
+import { Connection, PublicKey, SystemProgram, Transaction, LAMPORTS_PER_SOL } from '@solana/web3.js';
 import { TOKEN_PROGRAM_ID, createMint, createAssociatedTokenAccount, mintTo, getAccount } from "@solana/spl-token";
 import chai, { assert, AssertionError, expect } from 'chai';
 import chaiAspromised from 'chai-as-promised';
@@ -32,30 +32,27 @@ describe("morbius", () => {
   const fundraiserConfig = anchor.web3.Keypair.generate();
 
   it("Initialize token accounts", async () => {
-    //airdrop to fundraiser 
-    await provider.connection.confirmTransaction(
-      await provider.connection.requestAirdrop(fundraiser.publicKey, 1000000000),
-      "processed"
+    //airdrop to fundraiser
+
+    //deprecated 
+    // await provider.connection.confirmTransaction(
+    //   await provider.connection.requestAirdrop(fundraiser.publicKey, 1000000000),
+    //   "processed"
+    // );
+
+    const connection = new Connection("http://127.0.0.1:8899", "confirmed");
+    const airdropSignature = await connection.requestAirdrop(
+      fundraiser.publicKey,
+      1000000000
     );
-    // const airDropSol = async () => {
-    //   try {
-    //     const connection = new Connection(clusterApiUrl("devnet"), "confirmed");
-    //     const airdropSignature = await connection.requestAirdrop(
-    //       keypair.publicKey,
-    //       2 * LAMPORTS_PER_SOL
-    //     );
 
-    //     const latestBlockHash = await connection.getLatestBlockhash();
+    const latestBlockHash = await connection.getLatestBlockhash();
 
-    //     await connection.confirmTransaction({
-    //       blockhash: latestBlockHash.blockhash,
-    //       lastValidBlockHeight: latestBlockHash.lastValidBlockHeight,
-    //       signature: airdropSignature,
-    //     });
-    //   } catch (error) {
-    //     console.error(error);
-    //   }
-    // };
+    await connection.confirmTransaction({
+      blockhash: latestBlockHash.blockhash,
+      lastValidBlockHeight: latestBlockHash.lastValidBlockHeight,
+      signature: airdropSignature,
+    });
 
     //fund contributors account
     await provider.sendAndConfirm(

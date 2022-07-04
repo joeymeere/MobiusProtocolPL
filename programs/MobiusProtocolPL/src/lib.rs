@@ -5,7 +5,7 @@ use instructions::*;
 pub mod instructions;
 pub mod state;
 
-declare_id!("3BBHkxoqwrspCjJ2tqaCAgeUPTBNcKFCWSy5DSQJEhz4");
+declare_id!("TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA");
 
 #[program]
 pub mod mobius_protocol_pl {
