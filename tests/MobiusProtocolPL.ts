@@ -17,6 +17,8 @@ describe("morbius", () => {
 
   const th = new MobiusClient(provider.connection, provider.wallet as any)
 
+  let mintToken = null;
+
   let fundraiserTokenAccount = null;
   let contributor1TokenAccount = null;
   let contributor2TokenAccount = null;
@@ -74,25 +76,35 @@ describe("morbius", () => {
       })(),
       [fundraiser]
     );
+
+    // create mint of reward token
+    mintToken = await createMint(
+      provider.connection,
+      fundraiser,
+      fundraiser.publicKey,
+      null,
+      0
+    );
+
     // create host & players reward token accounts
     fundraiserTokenAccount = await createAssociatedTokenAccount(
       provider.connection,
       fundraiser,
-      null,
+      mintToken,
       fundraiser.publicKey
     );
 
     contributor1TokenAccount = await createAssociatedTokenAccount(
       provider.connection,
       contributor1,
-      null,
+      mintToken,
       contributor1.publicKey
     );
 
     contributor2TokenAccount = await createAssociatedTokenAccount(
       provider.connection,
       contributor2,
-      null,
+      mintToken,
       contributor2.publicKey
     );
   });
