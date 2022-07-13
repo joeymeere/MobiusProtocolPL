@@ -1,5 +1,5 @@
 import * as anchor from '@project-serum/anchor';
-import { BN, Idl, Program, AnchorProvider, Address } from '@project-serum/anchor';
+import { BN, Idl, Program, AnchorProvider } from '@project-serum/anchor';
 import { Connection, Keypair, PublicKey, SystemProgram } from '@solana/web3.js';
 import {
     Account,
@@ -7,7 +7,7 @@ import {
     TOKEN_PROGRAM_ID,
 } from '@solana/spl-token';
 import { MobiusProtocolPl } from '../../target/types/mobius_protocol_pl';
-import { AccountUtils, toBN, isKp, translateAddress } from '../mobius-common';
+import { AccountUtils, toBN, isKp, translateAddress, Address } from '../mobius-common';
 
 export class MobiusClient extends AccountUtils {
     // @ts-ignore
@@ -96,7 +96,6 @@ export class MobiusClient extends AccountUtils {
         tokenVaultBump: number,
     ) {
         const signers = [fundraiserConfig];
-        fundraiser = translateAddress(fundraiser)
         // if (isKp(fundraiser)) signers.push(<Keypair>fundraiser)
         const txSig = await this.mobiusProgram.methods.createFundraiser(
             toBN(start),
@@ -104,7 +103,7 @@ export class MobiusClient extends AccountUtils {
             tokenVaultBump,
         ).accounts({
             fundraiserConfig: fundraiserConfig.publicKey,
-            fundraiser: fundraiser.,
+            fundraiser: translateAddress(fundraiser),
             tokenVault,
             systemProgram: SystemProgram.programId,
             rent: anchor.web3.SYSVAR_RENT_PUBKEY
