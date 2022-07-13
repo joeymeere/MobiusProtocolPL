@@ -32,6 +32,17 @@ export function toBN(i: any): any {
     return i;
 }
 
+// Translates an address to a Pubkey.
+export function translateAddress(address: Address): PublicKey {
+    return address instanceof PublicKey ? address : new PublicKey(address);
+}
+
+/**
+ * An address to identify an account on chain. Can be a [[PublicKey]],
+ * or Base 58 encoded string.
+ */
+export type Address = PublicKey | string;
+
 function parseType<T>(v: T): string {
     if (v === null || v === undefined) {
         return 'null';
