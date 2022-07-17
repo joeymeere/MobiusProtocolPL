@@ -1,7 +1,7 @@
 [features]
 seeds = false
 [programs.localnet]
-mobius_protocol_pl = "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"
+mobius_protocol_pl = "5izPbb651w3ZUTgNZnUpmF2bRdzmePAwz4xcnK4NNbEx"
 
 [registry]
 url = "https://anchor.projectserum.com"

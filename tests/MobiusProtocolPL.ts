@@ -6,7 +6,7 @@ import { TOKEN_PROGRAM_ID, createMint, createAssociatedTokenAccount, mintTo, get
 import chai, { assert, AssertionError, expect } from 'chai';
 import chaiAspromised from 'chai-as-promised';
 
-import { MobiusClient } from '../src';
+// import { MobiusClient } from '../src';
 
 chai.use(chaiAspromised);
 
@@ -15,7 +15,9 @@ describe("mobius", () => {
   const provider = anchor.AnchorProvider.env();
   anchor.setProvider(provider);
 
-  const th = new MobiusClient(provider.connection, provider.wallet as any)
+  const th = anchor.workspace.MobiusProtocolPl as Program<MobiusProtocolPl>;
+
+  // const th = new MobiusClient(provider.connection, provider.wallet as any)
 
   let mintToken = null;
 
@@ -109,53 +111,53 @@ describe("mobius", () => {
     );
   });
 
-  it('creates fundraiser', async () => {
-    const [token_vault_pda, token_vault_bump] = await th.findTokenVaultPDA(fundraiserConfig.publicKey);
+  // it('creates fundraiser', async () => {
+  //   const [token_vault_pda, token_vault_bump] = await th.findTokenVaultPDA(fundraiserConfig.publicKey);
 
-    const _START_TIME = Math.ceil(Date.now() / 1000 + 5)
+  //   const _START_TIME = Math.ceil(Date.now() / 1000 + 5)
 
-    await th.createFundraiser(
-      fundraiserConfig,
-      fundraiser,
-      token_vault_pda,
-      _START_TIME,
-      2000000000,
-      token_vault_bump,
-    );
+  //   await th.createFundraiser(
+  //     fundraiserConfig,
+  //     fundraiser,
+  //     token_vault_pda,
+  //     _START_TIME,
+  //     2000000000,
+  //     token_vault_bump,
+  //   );
 
-    // this test is for 'set_fundraiser_config' function
-    const fundraiserAcc = await th.fetchFundraiserAcc(fundraiserConfig.publicKey);
-    let _tokenVault = await getAccount(
-      provider.connection,
-      token_vault_pda
-    );
+  //   // this test is for 'set_fundraiser_config' function
+  //   const fundraiserAcc = await th.fetchFundraiserAcc(fundraiserConfig.publicKey);
+  //   let _tokenVault = await getAccount(
+  //     provider.connection,
+  //     token_vault_pda
+  //   );
 
-    // let _hostTokenAccountReward = await getAccount(
-    //   provider.connection,
-    //   hostTokenAccount
-    // );
+  //   // let _hostTokenAccountReward = await getAccount(
+  //   //   provider.connection,
+  //   //   hostTokenAccount
+  //   // );
 
-    assert.equal(fundraiserAcc.fundraiser.toBase58(), fundraiser.publicKey.toBase58())
-    // assert.equal(fundraiserAcc.hostRewardAccount.toBase58(), hostTokenAccountReward.toBase58())
-    assert.equal(fundraiserAcc.tokenVault.toBase58(), token_vault_pda.toBase58())
+  //   assert.equal(fundraiserAcc.fundraiser.toBase58(), fundraiser.publicKey.toBase58())
+  //   // assert.equal(fundraiserAcc.hostRewardAccount.toBase58(), hostTokenAccountReward.toBase58())
+  //   assert.equal(fundraiserAcc.tokenVault.toBase58(), token_vault_pda.toBase58())
 
-    assert.ok(fundraiserAcc.startTime.toNumber() == _START_TIME)
-    assert.ok(fundraiserAcc.endTime.toNumber() == 2000000000)
-    assert.ok(fundraiserAcc.tokenVaultBump == token_vault_bump)
+  //   assert.ok(fundraiserAcc.startTime.toNumber() == _START_TIME)
+  //   assert.ok(fundraiserAcc.endTime.toNumber() == 2000000000)
+  //   assert.ok(fundraiserAcc.tokenVaultBump == token_vault_bump)
 
-    // this test is for 'set_authority_token_vault' function
-    const [_vault_authority_pda, _vault_authority_bump] = await PublicKey.findProgramAddress(
-      [
-        Buffer.from(anchor.utils.bytes.utf8.encode("authority-seed")),
-        fundraiserConfig.publicKey.toBytes()
-      ],
-      th.mobiusProgram.programId
-    );
+  //   // this test is for 'set_authority_token_vault' function
+  //   const [_vault_authority_pda, _vault_authority_bump] = await PublicKey.findProgramAddress(
+  //     [
+  //       Buffer.from(anchor.utils.bytes.utf8.encode("authority-seed")),
+  //       fundraiserConfig.publicKey.toBytes()
+  //     ],
+  //     th.mobiusProgram.programId
+  //   );
 
-    // assert.ok(Number(_hostTokenAccountReward.amount) == 0);
-    assert.ok(_tokenVault.owner.equals(_vault_authority_pda));
-    // assert.ok(Number(_rewardEscrow.amount) == 30);
-  });
+  //   // assert.ok(Number(_hostTokenAccountReward.amount) == 0);
+  //   assert.ok(_tokenVault.owner.equals(_vault_authority_pda));
+  //   // assert.ok(Number(_rewardEscrow.amount) == 30);
+  // });
 
 
 
