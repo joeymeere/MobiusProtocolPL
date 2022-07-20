@@ -73,6 +73,11 @@ describe("mobius", () => {
             toPubkey: contributor2.publicKey,
             lamports: 100000000,
           }),
+          SystemProgram.transfer({
+            fromPubkey: fundraiser.publicKey,
+            toPubkey: fundraiserConfig.publicKey,
+            lamports: 100000000,
+          }),
         );
         return tx;
       })(),
@@ -121,6 +126,11 @@ describe("mobius", () => {
     token_vault_pda = _token_vault_pda;
     token_vault_bump = _token_vault_bump;
 
+    console.log(fundraiser.publicKey.toBase58());
+    console.log(fundraiserConfig.publicKey.toBase58());
+    console.log(token_vault_pda.toBase58());
+
+
     await th.methods
       .createFundraiser(new BN(_START_TIME), new BN(2000000000), token_vault_bump)
       .accounts({
@@ -128,7 +138,8 @@ describe("mobius", () => {
         fundraiser: fundraiser.publicKey,
         tokenVault: token_vault_pda,
         systemProgram: SystemProgram.programId,
-        rent: anchor.web3.SYSVAR_RENT_PUBKEY
+        rent: anchor.web3.SYSVAR_RENT_PUBKEY,
+        tokenProgram: TOKEN_PROGRAM_ID
       })
       .signers([fundraiser])
       .rpc()
