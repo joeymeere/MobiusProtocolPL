@@ -20,8 +20,9 @@ pub struct CreateCampaign<'info> {
       init,
       seeds = [b"token-vault".as_ref(), fundraiser_config.to_account_info().key.as_ref()],
       bump,
-      space = 9999,
       payer = fundraiser,
+      token::authority = fundraiser_config,
+      token::mint = 
   )]
   pub token_vault: Account<'info, TokenAccount>,
 
