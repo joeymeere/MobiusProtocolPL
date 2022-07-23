@@ -13,15 +13,15 @@ pub struct CreateCampaign<'info> {
   #[account(mut)]
   pub fundraiser: Signer<'info>,
 
-  #[account(init, payer = fundraiser, space = 9999)]
+  #[account(init, payer = fundraiser, space = 999)]
   pub fundraiser_sol_token_account: Account<'info, TokenAccount>,
 
-  #[account(init, payer = fundraiser, space = 9999)]
+  #[account(init, payer = fundraiser, space = 999)]
   pub fundraiser_usdc_token_account: Account<'info, TokenAccount>,
 
   #[account(
       init,
-      seeds = [b"token-vault".as_ref(), fundraiser_config.to_account_info().key.as_ref()],
+      seeds = [b"sol-token-vault".as_ref(), fundraiser_config.to_account_info().key.as_ref()],
       bump,
       payer = fundraiser,
       token::authority = fundraiser_config,
@@ -34,7 +34,7 @@ pub struct CreateCampaign<'info> {
 
   #[account(
     init,
-    seeds = [b"token-vault".as_ref(), fundraiser_config.to_account_info().key.as_ref()],
+    seeds = [b"usdc-token-vault".as_ref(), fundraiser_config.to_account_info().key.as_ref()],
     bump,
     payer = fundraiser,
     token::authority = fundraiser_config,

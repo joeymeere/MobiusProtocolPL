@@ -29,11 +29,13 @@ describe("mobius", () => {
 
   let sol_token_vault_pda: PublicKey = null; // escrow account stores reward tokens
   let sol_token_vault_bump: number = null;
-  let sol_token_vault_authority_pda = null;
+  // let sol_token_vault_authority_pda = null;
 
   let usdc_token_vault_pda: PublicKey = null; // escrow account stores reward tokens
   let usdc_token_vault_bump: number = null;
-  let usdc_token_vault_authority_pda = null;
+  // let usdc_token_vault_authority_pda = null;
+
+  let vault_authority_pda = null;
 
 
   const fundraiser = anchor.web3.Keypair.generate();
@@ -100,7 +102,7 @@ describe("mobius", () => {
       0
     );
 
-    solMint = await createMint(
+    usdcMint = await createMint(
       provider.connection,
       fundraiser,
       fundraiser.publicKey,
@@ -117,7 +119,7 @@ describe("mobius", () => {
     );
 
     // create fundraiser usdc token account
-    fundraiserSolTokenAccount = await createAssociatedTokenAccount(
+    fundraiserUsdcTokenAccount = await createAssociatedTokenAccount(
       provider.connection,
       fundraiser,
       usdcMint,
@@ -140,26 +142,35 @@ describe("mobius", () => {
   });
 
   it('creates fundraiser', async () => {
-    const [_token_vault_pda, _token_vault_bump] = await PublicKey.findProgramAddress(
-      [Buffer.from(anchor.utils.bytes.utf8.encode("token-vault")), fundraiserConfig.publicKey.toBytes()],
+    const [_sol_token_vault_pda, _sol_token_vault_bump] = await PublicKey.findProgramAddress(
+      [Buffer.from(anchor.utils.bytes.utf8.encode("sol-token-vault")), fundraiserConfig.publicKey.toBytes()],
+      th.programId
+    );
+
+    const [_usdc_token_vault_pda, _usdc_token_vault_bump] = await PublicKey.findProgramAddress(
+      [Buffer.from(anchor.utils.bytes.utf8.encode("usdc-token-vault")), fundraiserConfig.publicKey.toBytes()],
       th.programId
     );
 
     const _START_TIME = Math.ceil(Date.now() / 1000 + 5);
-    token_vault_pda = _token_vault_pda;
-    token_vault_bump = _token_vault_bump;
 
-    console.log(fundraiser.publicKey.toBase58());
-    console.log(fundraiserConfig.publicKey.toBase58());
-    console.log(token_vault_pda.toBase58());
+    sol_token_vault_pda = _sol_token_vault_pda;
+    sol_token_vault_bump = _sol_token_vault_bump;
 
+    usdc_token_vault_pda = _usdc_token_vault_pda;
+    usdc_token_vault_bump = _usdc_token_vault_bump;
+
+    // console.log(fundraiser.publicKey.toBase58());
+    // console.log(fundraiserConfig.publicKey.toBase58());
+    // console.log(sol_token_vault_pda.toBase58());
 
     await th.methods
-      .createFundraiser(new BN(_START_TIME), new BN(2000000000), token_vault_bump)
+      .createFundraiser(new BN(_START_TIME), new BN(2000000000), sol_token_vault_bump, usdc_token_vault_bump)
       .accounts({
         fundraiserConfig: fundraiserConfig.publicKey,
         fundraiser: fundraiser.publicKey,
-        tokenVault: token_vault_pda,
+        solTokenVault: sol_token_vault_pda,
+        usdcTokenVault: usdc_token_vault_pda,
         systemProgram: SystemProgram.programId,
         rent: anchor.web3.SYSVAR_RENT_PUBKEY,
         tokenProgram: TOKEN_PROGRAM_ID
@@ -170,9 +181,15 @@ describe("mobius", () => {
 
     // this test is for 'set_fundraiser_config' function
     const fundraiserAcc = await th.account.fundraiser.fetch(fundraiserConfig.publicKey);
-    let _tokenVault = await getAccount(
+
+    let _solTokenVault = await getAccount(
       provider.connection,
-      token_vault_pda
+      sol_token_vault_pda
+    );
+
+    let _usdcTokenVault = await getAccount(
+      provider.connection,
+      usdc_token_vault_pda
     );
 
     // let _hostTokenAccountReward = await getAccount(
@@ -182,11 +199,12 @@ describe("mobius", () => {
 
     assert.equal(fundraiserAcc.fundraiser.toBase58(), fundraiser.publicKey.toBase58())
     // assert.equal(fundraiserAcc.hostRewardAccount.toBase58(), hostTokenAccountReward.toBase58())
-    assert.equal(fundraiserAcc.tokenVault.toBase58(), token_vault_pda.toBase58())
-
+    assert.equal(fundraiserAcc.solTokenVault.toBase58(), sol_token_vault_pda.toBase58())
+    assert.equal(fundraiserAcc.usdcTokenVault.toBase58(), usdc_token_vault_pda.toBase58())
     assert.ok(fundraiserAcc.startTime.toNumber() == _START_TIME)
     assert.ok(fundraiserAcc.endTime.toNumber() == 2000000000)
-    assert.ok(fundraiserAcc.tokenVaultBump == token_vault_bump)
+    assert.ok(fundraiserAcc.solTokenVaultBump == sol_token_vault_bump)
+    assert.ok(fundraiserAcc.usdcTokenVaultBump == usdc_token_vault_bump)
 
     // this test is for 'set_authority_token_vault' function
     const [_vault_authority_pda, _vault_authority_bump] = await PublicKey.findProgramAddress(
@@ -197,10 +215,11 @@ describe("mobius", () => {
       th.programId
     );
 
-    token_vault_authority_pda = _vault_authority_pda
+    vault_authority_pda = _vault_authority_pda
 
     // assert.ok(Number(_hostTokenAccountReward.amount) == 0);
-    assert.ok(_tokenVault.owner.equals(token_vault_authority_pda));
+    assert.ok(_solTokenVault.owner.equals(vault_authority_pda));
+    assert.ok(_usdcTokenVault.owner.equals(vault_authority_pda));
     // assert.ok(Number(_rewardEscrow.amount) == 30);
   });
 
