@@ -7,17 +7,25 @@ pub struct Fundraiser {
   //contributor pubkey 
   pub contributor: Pubkey,
   // amount of sol contributions 
-  pub sol_qty: u128,
-  // amount of usdc contributions 
+  pub sol_qty: u128, 
+  //mint of sol 
+  pub sol_mint: Pubkey,
+  // amount of usdc contributions
   pub usdc_qty: u128,
+  //mint of usdc 
+  pub usdc_mint: Pubkey,
   //start of fundraising campaign
   pub start_time: u64,
   //end of fundraising campaign 
   pub end_time: u64,
-  //stores contributions from contributors
-  pub token_vault: Pubkey,
+  //stores sol contributions from contributors
+  pub sol_token_vault: Pubkey,
   //token vault bump 
-  pub token_vault_bump: u8,
+  pub sol_token_vault_bump: u8,
+  //stores sol contributions from contributors
+  pub usdc_token_vault: Pubkey,
+  //token vault bump 
+  pub usdc_token_vault_bump: u8,  
 }
 
 impl Fundraiser {

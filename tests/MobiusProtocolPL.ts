@@ -19,15 +19,22 @@ describe("mobius", () => {
 
   // const th = new MobiusClient(provider.connection, provider.wallet as any)
 
-  let mintToken = null;
+  let solMint = null;
+  let usdcMint = null;
 
-  let fundraiserTokenAccount = null;
+  let fundraiserSolTokenAccount = null;
+  let fundraiserUsdcTokenAccount = null;
   let contributor1TokenAccount = null;
   let contributor2TokenAccount = null;
 
-  let token_vault_pda: PublicKey = null; // escrow account stores reward tokens
-  let token_vault_bump: number = null;
-  let token_vault_authority_pda = null;
+  let sol_token_vault_pda: PublicKey = null; // escrow account stores reward tokens
+  let sol_token_vault_bump: number = null;
+  let sol_token_vault_authority_pda = null;
+
+  let usdc_token_vault_pda: PublicKey = null; // escrow account stores reward tokens
+  let usdc_token_vault_bump: number = null;
+  let usdc_token_vault_authority_pda = null;
+
 
   const fundraiser = anchor.web3.Keypair.generate();
   const contributor1 = anchor.web3.Keypair.generate();
@@ -85,7 +92,7 @@ describe("mobius", () => {
     );
 
     // create mint of reward token
-    mintToken = await createMint(
+    solMint = await createMint(
       provider.connection,
       fundraiser,
       fundraiser.publicKey,
@@ -93,25 +100,41 @@ describe("mobius", () => {
       0
     );
 
-    // create host & players reward token accounts
-    fundraiserTokenAccount = await createAssociatedTokenAccount(
+    solMint = await createMint(
       provider.connection,
       fundraiser,
-      mintToken,
+      fundraiser.publicKey,
+      null,
+      0
+    );
+
+    // create fundraiser sol token account
+    fundraiserSolTokenAccount = await createAssociatedTokenAccount(
+      provider.connection,
+      fundraiser,
+      solMint,
+      fundraiser.publicKey
+    );
+
+    // create fundraiser usdc token account
+    fundraiserSolTokenAccount = await createAssociatedTokenAccount(
+      provider.connection,
+      fundraiser,
+      usdcMint,
       fundraiser.publicKey
     );
 
     contributor1TokenAccount = await createAssociatedTokenAccount(
       provider.connection,
       contributor1,
-      mintToken,
+      solMint,
       contributor1.publicKey
     );
 
     contributor2TokenAccount = await createAssociatedTokenAccount(
       provider.connection,
       contributor2,
-      mintToken,
+      usdcMint,
       contributor2.publicKey
     );
   });
