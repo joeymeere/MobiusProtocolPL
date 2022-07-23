@@ -26,6 +26,14 @@ pub struct Fundraiser {
   pub usdc_token_vault: Pubkey,
   //token vault bump 
   pub usdc_token_vault_bump: u8,  
+  //fundraisers sol token account 
+  pub fundraiser_sol_token_account: Pubkey,
+  // fundraiser sol token account bump
+  pub fundraiser_sol_bump: u8,
+  //fundraisers sol token account 
+  pub fundraiser_usdc_token_account: Pubkey,
+  // fundraiser sol token account bump
+  pub fundraiser_usdc_bump: u8,
 }
 
 impl Fundraiser {
