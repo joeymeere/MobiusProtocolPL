@@ -4,8 +4,6 @@ use anchor_lang::prelude::*;
 pub struct Fundraiser {
   //fundraiser pubkey
   pub fundraiser: Pubkey,
-  //contributor pubkey 
-  pub contributor: Pubkey,
   // amount of sol contributions 
   pub sol_qty: u128, 
   //mint of sol 
@@ -28,12 +26,8 @@ pub struct Fundraiser {
   pub usdc_token_vault_bump: u8,  
   //fundraisers sol token account 
   pub fundraiser_sol_token_account: Pubkey,
-  // fundraiser sol token account bump
-  pub fundraiser_sol_bump: u8,
   //fundraisers sol token account 
   pub fundraiser_usdc_token_account: Pubkey,
-  // fundraiser sol token account bump
-  pub fundraiser_usdc_bump: u8,
 }
 
 impl Fundraiser {

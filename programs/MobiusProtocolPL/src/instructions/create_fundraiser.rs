@@ -6,32 +6,18 @@ use spl_token::instruction::AuthorityType;
 
 #[derive(Accounts)]
 pub struct CreateCampaign<'info> {
-  // define accounts taken in by the CreateGame instruction
-  #[account(init, payer = fundraiser, space = 8 + (32 * 3) + (16 * 2) + (8 * 2) + 1)]
-  pub fundraiser_config: Account<'info, Fundraiser>,
+  // discriminator + pubkey * 7 + u128 * 2 + u64 * 2 + U8 * 2
+  #[account(init, payer = fundraiser, space = 8 + (32 * 7) + (16 * 2) + (8 * 2) + (2 * 1))]
+  pub fundraiser_config: Box<Account<'info, Fundraiser>>,
 
   #[account(mut)]
   pub fundraiser: Signer<'info>,
 
-  #[account(
-      init,
-      payer = fundraiser,
-      seeds = [b"fundraiser-sol-token-account".as_ref(), fundraiser_config.to_account_info().key.as_ref()], 
-      bump,
-      token::authority = fundraiser_config,
-      token::mint = sol_mint
-  )]
-  pub fundraiser_sol_token_account: Account<'info, TokenAccount>,
+  #[account(mut)]
+  pub fundraiser_sol_token_account: Box<Account<'info, TokenAccount>>,
 
-  #[account(
-      init, 
-      payer = fundraiser, 
-      seeds = [b"fundraiser-usdc-token-account".as_ref(), fundraiser_config.to_account_info().key.as_ref()], 
-      bump,
-      token::authority = fundraiser_config,
-      token::mint = usdc_mint
-  )]
-  pub fundraiser_usdc_token_account: Account<'info, TokenAccount>,
+  #[account(mut)]
+  pub fundraiser_usdc_token_account: Box<Account<'info, TokenAccount>>,
 
   #[account(
       init,
@@ -41,10 +27,10 @@ pub struct CreateCampaign<'info> {
       token::authority = fundraiser_config,
       token::mint = sol_mint
   )]
-  pub sol_token_vault: Account<'info, TokenAccount>,
+  pub sol_token_vault: Box<Account<'info, TokenAccount>>,
 
   #[account(mut)]
-  pub sol_mint: Account<'info, Mint>,
+  pub sol_mint: Box<Account<'info, Mint>>,
 
   #[account(
     init,
@@ -54,10 +40,10 @@ pub struct CreateCampaign<'info> {
     token::authority = fundraiser_config,
     token::mint = usdc_mint
   )]
-  pub usdc_token_vault: Account<'info, TokenAccount>,
+  pub usdc_token_vault: Box<Account<'info, TokenAccount>>,
 
   #[account(mut)]
-  pub usdc_mint: Account<'info, Mint>,
+  pub usdc_mint: Box<Account<'info, Mint>>,
 
   pub system_program: Program<'info, System>,
   pub rent: Sysvar<'info, Rent>,
@@ -75,8 +61,6 @@ impl<'info> CreateCampaign<'info> {
     end: u64, 
     sol_token_vault_bump: u8,
     usdc_token_vault_bump: u8,
-    fundraiser_sol_bump: u8,
-    fundraiser_usdc_bump: u8
   ) {
     self.fundraiser_config.fundraiser = *self.fundraiser.to_account_info().key;
     self.fundraiser_config.start_time = start;
@@ -89,10 +73,6 @@ impl<'info> CreateCampaign<'info> {
     self.fundraiser_config.sol_token_vault_bump = sol_token_vault_bump;
     self.fundraiser_config.usdc_token_vault = *self.usdc_token_vault.to_account_info().key;
     self.fundraiser_config.usdc_token_vault_bump = usdc_token_vault_bump;
-    self.fundraiser_config.fundraiser_sol_token_account = *self.fundraiser_sol_token_account.to_account_info().key;
-    self.fundraiser_config.fundraiser_sol_bump = fundraiser_sol_bump;
-    self.fundraiser_config.fundraiser_usdc_token_account = *self.fundraiser_usdc_token_account.to_account_info().key;
-    self.fundraiser_config.fundraiser_usdc_bump = fundraiser_usdc_bump;
   }
 
   fn set_authority_sol_token_vault(&self, program_id: &anchor_lang::prelude::Pubkey) {
@@ -136,48 +116,6 @@ impl<'info> CreateCampaign<'info> {
     )
     .unwrap();
   }
-
-  fn set_authority_fundraiser_sol_token_account(&self, program_id: &anchor_lang::prelude::Pubkey) {
-    const ESCROW_PDA_SEED: &[u8] = b"authority-seed";
-    let (vault_authority, _vault_authority_bump) = Pubkey::find_program_address(
-      &[
-        ESCROW_PDA_SEED,
-        self.fundraiser_config.to_account_info().key.as_ref(),
-      ],
-      program_id,
-    );
-    let cpi_accounts = SetAuthority {
-      account_or_mint: self.fundraiser_sol_token_account.to_account_info().clone(),
-      current_authority: self.fundraiser.to_account_info().clone(),
-    };
-    token::set_authority(
-      CpiContext::new(self.token_program.clone(), cpi_accounts),
-      AuthorityType::AccountOwner,
-      Some(vault_authority),
-    )
-    .unwrap();
-  }
-
-  fn set_authority_fundraiser_usdc_token_account(&self, program_id: &anchor_lang::prelude::Pubkey) {
-    const ESCROW_PDA_SEED: &[u8] = b"authority-seed";
-    let (vault_authority, _vault_authority_bump) = Pubkey::find_program_address(
-      &[
-        ESCROW_PDA_SEED,
-        self.fundraiser_config.to_account_info().key.as_ref(),
-      ],
-      program_id,
-    );
-    let cpi_accounts = SetAuthority {
-      account_or_mint: self.fundraiser_usdc_token_account.to_account_info().clone(),
-      current_authority: self.fundraiser.to_account_info().clone(),
-    };
-    token::set_authority(
-      CpiContext::new(self.token_program.clone(), cpi_accounts),
-      AuthorityType::AccountOwner,
-      Some(vault_authority),
-    )
-    .unwrap();
-  }
 }
 
 pub fn handler(
@@ -186,8 +124,6 @@ pub fn handler(
   end: u64, 
   sol_token_vault_bump: u8,
   usdc_token_vault_bump: u8,
-  fundraiser_sol_bump: u8,
-  fundraiser_sol_bump: u8
 ) -> Result<()> {
   // core instruction to allow hosts to create a game account
   // must pass in required settings (join, start, end, rewards, etc) to game account
@@ -196,12 +132,8 @@ pub fn handler(
     end, 
     sol_token_vault_bump,
     usdc_token_vault_bump,
-    fundraiser_sol_bump,
-    fundraiser_usdc_bump
   );
   ctx.accounts.set_authority_sol_token_vault(ctx.program_id);
   ctx.accounts.set_authority_usdc_token_vault(ctx.program_id);
-  ctx.accounts.set_authority_fundraiser_sol_token_account(ctx.program_id);
-  ctx.accounts.set_authority_fundraiser_usdc_token_account(ctx.program_id);
   Ok(())
 }

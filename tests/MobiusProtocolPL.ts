@@ -27,10 +27,12 @@ describe("mobius", () => {
   let contributor1TokenAccount = null;
   let contributor2TokenAccount = null;
 
+  let solTokenVault = null;
   let sol_token_vault_pda: PublicKey = null; // escrow account stores reward tokens
   let sol_token_vault_bump: number = null;
   // let sol_token_vault_authority_pda = null;
 
+  let usdcTokenVault = null;
   let usdc_token_vault_pda: PublicKey = null; // escrow account stores reward tokens
   let usdc_token_vault_bump: number = null;
   // let usdc_token_vault_authority_pda = null;
@@ -126,6 +128,22 @@ describe("mobius", () => {
       fundraiser.publicKey
     );
 
+    // create fundraiser usdc token account
+    solTokenVault = await createAssociatedTokenAccount(
+      provider.connection,
+      fundraiser,
+      solMint,
+      fundraiserConfig.publicKey
+    );
+
+    // create fundraiser usdc token account
+    usdcTokenVault = await createAssociatedTokenAccount(
+      provider.connection,
+      fundraiser,
+      usdcMint,
+      fundraiserConfig.publicKey
+    );
+
     contributor1TokenAccount = await createAssociatedTokenAccount(
       provider.connection,
       contributor1,
@@ -160,9 +178,14 @@ describe("mobius", () => {
     usdc_token_vault_pda = _usdc_token_vault_pda;
     usdc_token_vault_bump = _usdc_token_vault_bump;
 
-    // console.log(fundraiser.publicKey.toBase58());
-    // console.log(fundraiserConfig.publicKey.toBase58());
-    // console.log(sol_token_vault_pda.toBase58());
+    console.log(fundraiser.publicKey.toBase58());
+    console.log(fundraiserConfig.publicKey.toBase58());
+    console.log(sol_token_vault_pda.toBase58());
+    console.log(usdc_token_vault_pda.toBase58());
+    console.log(solMint.toBase58());
+    console.log(usdcMint.toBase58());
+    console.log(fundraiserSolTokenAccount.toBase58());
+    console.log(fundraiserUsdcTokenAccount.toBase58());
 
     await th.methods
       .createFundraiser(new BN(_START_TIME), new BN(2000000000), sol_token_vault_bump, usdc_token_vault_bump)
@@ -171,6 +194,10 @@ describe("mobius", () => {
         fundraiser: fundraiser.publicKey,
         solTokenVault: sol_token_vault_pda,
         usdcTokenVault: usdc_token_vault_pda,
+        solMint: solMint,
+        usdcMint: usdcMint,
+        fundraiserSolTokenAccount: fundraiserSolTokenAccount,
+        fundraiserUsdcTokenAccount: fundraiserUsdcTokenAccount,
         systemProgram: SystemProgram.programId,
         rent: anchor.web3.SYSVAR_RENT_PUBKEY,
         tokenProgram: TOKEN_PROGRAM_ID

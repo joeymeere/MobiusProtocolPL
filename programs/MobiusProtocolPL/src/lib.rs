@@ -16,7 +16,7 @@ pub mod mobius_protocol_pl {
         start: u64, 
         end: u64, 
         sol_token_vault_bump: u8,
-        usdc_token_vault_bump: u8
+        usdc_token_vault_bump: u8,
     ) -> Result<()> {
         instructions::create_fundraiser::handler(
             ctx, 
