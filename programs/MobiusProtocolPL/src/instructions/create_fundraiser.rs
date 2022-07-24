@@ -86,7 +86,7 @@ impl<'info> CreateCampaign<'info> {
     );
     let cpi_accounts = SetAuthority {
       account_or_mint: self.sol_token_vault.to_account_info().clone(),
-      current_authority: self.fundraiser.to_account_info().clone(),
+      current_authority: self.fundraiser_config.to_account_info().clone(),
     };
     token::set_authority(
       CpiContext::new(self.token_program.clone(), cpi_accounts),
@@ -107,7 +107,7 @@ impl<'info> CreateCampaign<'info> {
     );
     let cpi_accounts = SetAuthority {
       account_or_mint: self.usdc_token_vault.to_account_info().clone(),
-      current_authority: self.fundraiser.to_account_info().clone(),
+      current_authority: self.fundraiser_config.to_account_info().clone(),
     };
     token::set_authority(
       CpiContext::new(self.token_program.clone(), cpi_accounts),

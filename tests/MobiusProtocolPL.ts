@@ -1,5 +1,5 @@
 import * as anchor from "@project-serum/anchor";
-import { Program, BN } from "@project-serum/anchor";
+import { Program, BN, Address } from "@project-serum/anchor";
 import { MobiusProtocolPl } from "../target/types/mobius_protocol_pl";
 import { Connection, PublicKey, SystemProgram, Transaction, LAMPORTS_PER_SOL } from '@solana/web3.js';
 import { TOKEN_PROGRAM_ID, createMint, createAssociatedTokenAccount, mintTo, getAccount } from "@solana/spl-token";
@@ -37,7 +37,7 @@ describe("mobius", () => {
   let usdc_token_vault_bump: number = null;
   // let usdc_token_vault_authority_pda = null;
 
-  let vault_authority_pda = null;
+  let vault_authority_pda: PublicKey = null;
 
 
   const fundraiser = anchor.web3.Keypair.generate();
@@ -101,7 +101,7 @@ describe("mobius", () => {
       fundraiser,
       fundraiser.publicKey,
       null,
-      0
+      0,
     );
 
     usdcMint = await createMint(
@@ -109,7 +109,7 @@ describe("mobius", () => {
       fundraiser,
       fundraiser.publicKey,
       null,
-      0
+      0,
     );
 
     // create fundraiser sol token account
@@ -182,8 +182,8 @@ describe("mobius", () => {
     console.log(fundraiserConfig.publicKey.toBase58());
     console.log(sol_token_vault_pda.toBase58());
     console.log(usdc_token_vault_pda.toBase58());
-    console.log(solMint.toBase58());
-    console.log(usdcMint.toBase58());
+    // console.log(solMint.toBase58());
+    // console.log(usdcMint.toBase58());
     console.log(fundraiserSolTokenAccount.toBase58());
     console.log(fundraiserUsdcTokenAccount.toBase58());
 
