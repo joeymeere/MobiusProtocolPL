@@ -26,4 +26,18 @@ pub mod mobius_protocol_pl {
             usdc_token_vault_bump,
         )
     }
+
+    pub fn std_contribute(
+        ctx: Context<StdContribute>, 
+        amount: u64,
+        select_token: u8 
+    ) -> Result<()> {
+        instructions::std_contribute::handler(
+            ctx,
+            amount,
+            select_token,  
+        );
+        Ok(())
+    }
+    
 }
