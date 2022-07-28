@@ -250,7 +250,10 @@ describe("mobius", () => {
     // assert.ok(Number(_rewardEscrow.amount) == 30);
   });
 
+  it('does standard contribution', async () => {
 
+
+  });
 
 
 

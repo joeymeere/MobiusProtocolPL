@@ -4,12 +4,12 @@ use anchor_lang::prelude::*;
 pub struct Contributor {
   //contributor pubkey
   pub contributor: Pubkey,
+  // sol qty 
+  pub sol_contributions: u128,
+  // usdc qty 
+  pub usdc_contributions: u128,
   //contributor config
-  pub contributor_config: Pubkey,
-  //contributions
-  pub contributions: u128,
-  //game pubkey,
-  pub fundraiser: Pubkey,
+  pub fundraiser_config: Pubkey,
 }
 
 impl Contributor {
