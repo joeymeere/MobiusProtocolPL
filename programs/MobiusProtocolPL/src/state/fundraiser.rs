@@ -5,7 +5,7 @@ pub struct Fundraiser {
   //fundraiser pubkey
   pub fundraiser: Pubkey,
   // amount of sol contributions 
-  pub sol_qty: u128, 
+  pub sol_qty: u64, 
   //mint of sol 
   pub sol_mint: Pubkey,
   //start of fundraising campaign

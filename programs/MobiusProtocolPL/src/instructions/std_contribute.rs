@@ -1,17 +1,19 @@
 use anchor_lang::prelude::*;
 //use anchor_lang::solana_program::{clock, program_option::COption, sysvar};
-use anchor_spl::token::{self, Token, Mint, TokenAccount, Transfer};
+use anchor_spl::token::{self, TokenAccount, Transfer};
 use crate::state::*;
 
 #[derive(Accounts)]
 pub struct StdContribute<'info> {
 
     //Init contributor program PDA
-    #[account(init,
+    #[account(
+        init,
         payer = contributor, 
-        space = 999,
+        space = 8 + 32 + 8,
         constraint = Clock::get().unwrap().unix_timestamp < fundraiser_config.end_time.try_into().unwrap(),
-        )]
+        constraint = Clock::get().unwrap().unix_timestamp >= fundraiser_config.start_time.try_into().unwrap(),
+    )]
         pub contributor_config: Account<'info, Contributor>,
 
         #[account(mut)]
@@ -26,18 +28,18 @@ pub struct StdContribute<'info> {
         #[account(mut)]
         pub contributor: Signer<'info>,
         pub system_program: Program<'info, System>,
+        ///CHECK: do not read or write to this program
         pub token_program: AccountInfo<'info>,
     }
 
 
 impl<'info> StdContribute<'info> {
-    fn contribute(&mut self, amount: u128) {
+    fn update_config(&mut self, amount: u64) {
         self.fundraiser_config.sol_qty += amount;
         self.contributor_config.sol_contributions += amount;
-        self.transfer_to_sol_vault(amount);
     }
 
-    fn transfer_to_sol_vault(&mut self, amount: u128) {
+    fn transfer_to_sol_vault(&self, amount: u64) -> Result<()> {
         let sender = &self.contributor;
         let sender_of_tokens = &self.contributor_token_account;
         let recipient_of_tokens = &self.sol_token_vault;
@@ -47,18 +49,20 @@ impl<'info> StdContribute<'info> {
             from: sender_of_tokens.to_account_info(),
             to: recipient_of_tokens.to_account_info(),
             authority: sender.to_account_info(),
-            };
+        };
 
         token::transfer(
         CpiContext::new(token_program.to_account_info(), context),
             amount,
-            );
-        }
+        )
     }
+}
 
 
-pub fn handler(ctx: Context<StdContribute>, amount: u128) {
-    ctx.accounts.contribute(amount);
+pub fn handler(ctx: Context<StdContribute>, amount: u64) -> Result<()> {
+    ctx.accounts.update_config(amount);
+    ctx.accounts.transfer_to_sol_vault(amount);
+    Ok(())
 }
 
 

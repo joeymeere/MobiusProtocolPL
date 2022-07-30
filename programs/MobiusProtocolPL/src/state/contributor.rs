@@ -5,7 +5,7 @@ pub struct Contributor {
   //contributor pubkey
   pub contributor: Pubkey,
   // sol qty 
-  pub sol_contributions: u128,
+  pub sol_contributions: u64,
   // usdc qty 
   // pub usdc_contributions: u128,
   //contributor config

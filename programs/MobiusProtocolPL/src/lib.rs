@@ -29,7 +29,7 @@ pub mod mobius_protocol_pl {
 
     pub fn std_contribute(
         ctx: Context<StdContribute>, 
-        amount: u128, 
+        amount: u64, 
     ) -> Result<()> {
         instructions::std_contribute::handler(
             ctx,
