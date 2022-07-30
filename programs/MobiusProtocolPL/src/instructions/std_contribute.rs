@@ -31,10 +31,10 @@ pub struct StdContribute<'info> {
 
 
 impl<'info> StdContribute<'info> {
-    fn contribute(&mut self, amount: u128, select_token: u8) {
+    fn contribute(&mut self, amount: u128) {
         self.fundraiser_config.sol_qty += amount;
-        self.contributor_config += amount;
-        transfer_to_sol_vault(amount);
+        self.contributor_config.sol_contributions += amount;
+        self.transfer_to_sol_vault(amount);
     }
 
     fn transfer_to_sol_vault(&mut self, amount: u128) {
@@ -52,13 +52,12 @@ impl<'info> StdContribute<'info> {
         token::transfer(
         CpiContext::new(token_program.to_account_info(), context),
             amount,
-            ).expect("failed to transfer");
-        
+            );
         }
     }
 
 
-pub fn handler(ctx: Context<StdContribute>, amount: u128, select_token: u8) {
+pub fn handler(ctx: Context<StdContribute>, amount: u128) {
     ctx.accounts.contribute(amount);
 }
 

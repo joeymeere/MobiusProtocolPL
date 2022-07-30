@@ -7,7 +7,7 @@ pub struct Contributor {
   // sol qty 
   pub sol_contributions: u128,
   // usdc qty 
-  pub usdc_contributions: u128,
+  // pub usdc_contributions: u128,
   //contributor config
   pub fundraiser_config: Pubkey,
 }
