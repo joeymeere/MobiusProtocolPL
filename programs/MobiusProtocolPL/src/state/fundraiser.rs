@@ -8,10 +8,6 @@ pub struct Fundraiser {
   pub sol_qty: u128, 
   //mint of sol 
   pub sol_mint: Pubkey,
-  // amount of usdc contributions
-  pub usdc_qty: u128,
-  //mint of usdc 
-  pub usdc_mint: Pubkey,
   //start of fundraising campaign
   pub start_time: u64,
   //end of fundraising campaign 
@@ -19,17 +15,24 @@ pub struct Fundraiser {
   //stores sol contributions from contributors
   pub sol_token_vault: Pubkey,
   //token vault bump 
-  pub sol_token_vault_bump: u8,
-  //stores sol contributions from contributors
-  pub usdc_token_vault: Pubkey,
-  //token vault bump 
-  pub usdc_token_vault_bump: u8,  
+  pub sol_token_vault_bump: u8,  
   //fundraisers sol token account 
   pub fundraiser_sol_token_account: Pubkey,
-  //fundraisers sol token account 
-  pub fundraiser_usdc_token_account: Pubkey,
 }
 
 impl Fundraiser {
   // leave empty
 }
+
+
+  // //stores sol contributions from contributors
+  // pub usdc_token_vault: Pubkey,
+  // //token vault bump 
+  // pub usdc_token_vault_bump: u8,
+  //   //fundraisers sol token account 
+  //   pub fundraiser_usdc_token_account: Pubkey,
+
+    // // amount of usdc contributions
+    // pub usdc_qty: u128,
+    // //mint of usdc 
+    // pub usdc_mint: Pubkey,

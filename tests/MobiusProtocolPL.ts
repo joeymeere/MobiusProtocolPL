@@ -20,10 +20,10 @@ describe("mobius", () => {
   // const th = new MobiusClient(provider.connection, provider.wallet as any)
 
   let solMint = null;
-  let usdcMint = null;
+  // let usdcMint = null;
 
   let fundraiserSolTokenAccount = null;
-  let fundraiserUsdcTokenAccount = null;
+  // let fundraiserUsdcTokenAccount = null;
   let contributor1TokenAccount = null;
   let contributor2TokenAccount = null;
 
@@ -32,9 +32,9 @@ describe("mobius", () => {
   let sol_token_vault_bump: number = null;
   // let sol_token_vault_authority_pda = null;
 
-  let usdcTokenVault = null;
-  let usdc_token_vault_pda: PublicKey = null; // escrow account stores reward tokens
-  let usdc_token_vault_bump: number = null;
+  // let usdcTokenVault = null;
+  // let usdc_token_vault_pda: PublicKey = null; // escrow account stores reward tokens
+  // let usdc_token_vault_bump: number = null;
   // let usdc_token_vault_authority_pda = null;
 
   let vault_authority_pda: PublicKey = null;
@@ -104,13 +104,13 @@ describe("mobius", () => {
       0,
     );
 
-    usdcMint = await createMint(
-      provider.connection,
-      fundraiser,
-      fundraiser.publicKey,
-      null,
-      0,
-    );
+    // usdcMint = await createMint(
+    //   provider.connection,
+    //   fundraiser,
+    //   fundraiser.publicKey,
+    //   null,
+    //   0,
+    // );
 
     // create fundraiser sol token account
     fundraiserSolTokenAccount = await createAssociatedTokenAccount(
@@ -121,12 +121,12 @@ describe("mobius", () => {
     );
 
     // create fundraiser usdc token account
-    fundraiserUsdcTokenAccount = await createAssociatedTokenAccount(
-      provider.connection,
-      fundraiser,
-      usdcMint,
-      fundraiser.publicKey
-    );
+    // fundraiserUsdcTokenAccount = await createAssociatedTokenAccount(
+    //   provider.connection,
+    //   fundraiser,
+    //   usdcMint,
+    //   fundraiser.publicKey
+    // );
 
     // create fundraiser usdc token account
     solTokenVault = await createAssociatedTokenAccount(
@@ -137,12 +137,12 @@ describe("mobius", () => {
     );
 
     // create fundraiser usdc token account
-    usdcTokenVault = await createAssociatedTokenAccount(
-      provider.connection,
-      fundraiser,
-      usdcMint,
-      fundraiserConfig.publicKey
-    );
+    // usdcTokenVault = await createAssociatedTokenAccount(
+    //   provider.connection,
+    //   fundraiser,
+    //   usdcMint,
+    //   fundraiserConfig.publicKey
+    // );
 
     contributor1TokenAccount = await createAssociatedTokenAccount(
       provider.connection,
@@ -154,7 +154,7 @@ describe("mobius", () => {
     contributor2TokenAccount = await createAssociatedTokenAccount(
       provider.connection,
       contributor2,
-      usdcMint,
+      solMint,
       contributor2.publicKey
     );
   });
@@ -165,39 +165,39 @@ describe("mobius", () => {
       th.programId
     );
 
-    const [_usdc_token_vault_pda, _usdc_token_vault_bump] = await PublicKey.findProgramAddress(
-      [Buffer.from(anchor.utils.bytes.utf8.encode("usdc-token-vault")), fundraiserConfig.publicKey.toBytes()],
-      th.programId
-    );
+    // const [_usdc_token_vault_pda, _usdc_token_vault_bump] = await PublicKey.findProgramAddress(
+    //   [Buffer.from(anchor.utils.bytes.utf8.encode("usdc-token-vault")), fundraiserConfig.publicKey.toBytes()],
+    //   th.programId
+    // );
 
     const _START_TIME = Math.ceil(Date.now() / 1000 + 5);
 
     sol_token_vault_pda = _sol_token_vault_pda;
     sol_token_vault_bump = _sol_token_vault_bump;
 
-    usdc_token_vault_pda = _usdc_token_vault_pda;
-    usdc_token_vault_bump = _usdc_token_vault_bump;
+    // usdc_token_vault_pda = _usdc_token_vault_pda;
+    // usdc_token_vault_bump = _usdc_token_vault_bump;
 
     console.log(fundraiser.publicKey.toBase58());
     console.log(fundraiserConfig.publicKey.toBase58());
     console.log(sol_token_vault_pda.toBase58());
-    console.log(usdc_token_vault_pda.toBase58());
+    // console.log(usdc_token_vault_pda.toBase58());
     // console.log(solMint.toBase58());
     // console.log(usdcMint.toBase58());
     console.log(fundraiserSolTokenAccount.toBase58());
-    console.log(fundraiserUsdcTokenAccount.toBase58());
+    // console.log(fundraiserUsdcTokenAccount.toBase58());
 
     await th.methods
-      .createFundraiser(new BN(_START_TIME), new BN(2000000000), sol_token_vault_bump, usdc_token_vault_bump)
+      .createFundraiser(new BN(_START_TIME), new BN(2000000000), sol_token_vault_bump)
       .accounts({
         fundraiserConfig: fundraiserConfig.publicKey,
         fundraiser: fundraiser.publicKey,
         solTokenVault: sol_token_vault_pda,
-        usdcTokenVault: usdc_token_vault_pda,
+        // usdcTokenVault: usdc_token_vault_pda,
         solMint: solMint,
-        usdcMint: usdcMint,
+        // usdcMint: usdcMint,
         fundraiserSolTokenAccount: fundraiserSolTokenAccount,
-        fundraiserUsdcTokenAccount: fundraiserUsdcTokenAccount,
+        // fundraiserUsdcTokenAccount: fundraiserUsdcTokenAccount,
         systemProgram: SystemProgram.programId,
         rent: anchor.web3.SYSVAR_RENT_PUBKEY,
         tokenProgram: TOKEN_PROGRAM_ID
@@ -214,10 +214,10 @@ describe("mobius", () => {
       sol_token_vault_pda
     );
 
-    let _usdcTokenVault = await getAccount(
-      provider.connection,
-      usdc_token_vault_pda
-    );
+    // let _usdcTokenVault = await getAccount(
+    //   provider.connection,
+    //   usdc_token_vault_pda
+    // );
 
     // let _hostTokenAccountReward = await getAccount(
     //   provider.connection,
@@ -227,11 +227,11 @@ describe("mobius", () => {
     assert.equal(fundraiserAcc.fundraiser.toBase58(), fundraiser.publicKey.toBase58())
     // assert.equal(fundraiserAcc.hostRewardAccount.toBase58(), hostTokenAccountReward.toBase58())
     assert.equal(fundraiserAcc.solTokenVault.toBase58(), sol_token_vault_pda.toBase58())
-    assert.equal(fundraiserAcc.usdcTokenVault.toBase58(), usdc_token_vault_pda.toBase58())
+    // assert.equal(fundraiserAcc.usdcTokenVault.toBase58(), usdc_token_vault_pda.toBase58())
     assert.ok(fundraiserAcc.startTime.toNumber() == _START_TIME)
     assert.ok(fundraiserAcc.endTime.toNumber() == 2000000000)
     assert.ok(fundraiserAcc.solTokenVaultBump == sol_token_vault_bump)
-    assert.ok(fundraiserAcc.usdcTokenVaultBump == usdc_token_vault_bump)
+    // assert.ok(fundraiserAcc.usdcTokenVaultBump == usdc_token_vault_bump)
 
     // this test is for 'set_authority_token_vault' function
     const [_vault_authority_pda, _vault_authority_bump] = await PublicKey.findProgramAddress(
@@ -246,14 +246,14 @@ describe("mobius", () => {
 
     // assert.ok(Number(_hostTokenAccountReward.amount) == 0);
     assert.ok(_solTokenVault.owner.equals(vault_authority_pda));
-    assert.ok(_usdcTokenVault.owner.equals(vault_authority_pda));
+    // assert.ok(_usdcTokenVault.owner.equals(vault_authority_pda));
     // assert.ok(Number(_rewardEscrow.amount) == 30);
   });
 
-  it('does standard contribution', async () => {
+  // it('does standard contribution', async () => {
 
 
-  });
+  // });
 
 
 
