@@ -15,27 +15,27 @@ pub mod mobius_protocol_pl {
         ctx: Context<CreateCampaign>, 
         start: u64, 
         end: u64, 
-        sol_token_vault_bump: u8,
+        // sol_token_vault_bump: u8,
         // usdc_token_vault_bump: u8,
     ) -> Result<()> {
         instructions::create_fundraiser::handler(
             ctx, 
             start, 
             end, 
-            sol_token_vault_bump,
+            // sol_token_vault_bump,
             // usdc_token_vault_bump,
         )
     }
 
-    pub fn std_contribute(
-        ctx: Context<StdContribute>, 
-        amount: u64, 
-    ) -> Result<()> {
-        instructions::std_contribute::handler(
-            ctx,
-            amount,  
-        );
-        Ok(())
-    }
+    // pub fn std_contribute(
+    //     ctx: Context<StdContribute>, 
+    //     amount: u64, 
+    // ) -> Result<()> {
+    //     instructions::std_contribute::handler(
+    //         ctx,
+    //         amount,  
+    //     );
+    //     Ok(())
+    // }
 
 }

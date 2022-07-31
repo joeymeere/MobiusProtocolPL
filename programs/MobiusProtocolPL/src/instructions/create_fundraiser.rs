@@ -19,18 +19,8 @@ pub struct CreateCampaign<'info> {
   // #[account(mut)]
   // pub fundraiser_usdc_token_account: Box<Account<'info, TokenAccount>>,
 
-  #[account(
-      init,
-      seeds = [b"sol-token-vault".as_ref(), fundraiser_config.to_account_info().key.as_ref()],
-      bump,
-      payer = fundraiser,
-      token::authority = fundraiser_config,
-      token::mint = sol_mint
-  )]
-  pub sol_token_vault: Box<Account<'info, TokenAccount>>,
-
   #[account(mut)]
-  pub sol_mint: Box<Account<'info, Mint>>,
+  pub sol_token_vault: Box<Account<'info, TokenAccount>>,
 
   pub system_program: Program<'info, System>,
   pub rent: Sysvar<'info, Rent>,
@@ -44,16 +34,16 @@ impl<'info> CreateCampaign<'info> {
     &mut self, 
     start: u64, 
     end: u64, 
-    sol_token_vault_bump: u8,
+    // sol_token_vault_bump: u8,
     // usdc_token_vault_bump: u8,
   ) {
     self.fundraiser_config.fundraiser = *self.fundraiser.to_account_info().key;
     self.fundraiser_config.start_time = start;
     self.fundraiser_config.end_time = end;
     self.fundraiser_config.sol_qty = 0;
-    self.fundraiser_config.sol_mint = *self.sol_mint.to_account_info().key;
     self.fundraiser_config.sol_token_vault = *self.sol_token_vault.to_account_info().key;
-    self.fundraiser_config.sol_token_vault_bump = sol_token_vault_bump;
+    // self.fundraiser_config.sol_mint = *self.sol_mint.to_account_info().key;
+    // self.fundraiser_config.sol_token_vault_bump = sol_token_vault_bump;
     // self.fundraiser_config.usdc_token_vault = *self.usdc_token_vault.to_account_info().key;
     // // self.fundraiser_config.usdc_token_vault_bump = usdc_token_vault_bump;
     // self.fundraiser_config.usdc_qty = 0;
@@ -86,7 +76,7 @@ pub fn handler(
   ctx: Context<CreateCampaign>, 
   start: u64, 
   end: u64, 
-  sol_token_vault_bump: u8,
+  // sol_token_vault_bump: u8,
   // usdc_token_vault_bump: u8,
 ) -> Result<()> {
   // core instruction to allow hosts to create a game account
@@ -94,7 +84,7 @@ pub fn handler(
   ctx.accounts.set_fundraiser_config(
     start, 
     end, 
-    sol_token_vault_bump,
+    // sol_token_vault_bump,
     // usdc_token_vault_bump,
   );
   ctx.accounts.set_authority_sol_token_vault(ctx.program_id);

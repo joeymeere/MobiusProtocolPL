@@ -16,20 +16,20 @@ pub struct StdContribute<'info> {
     )]
         pub contributor_config: Account<'info, Contributor>,
 
-        #[account(mut)]
-        pub fundraiser_config: Account<'info, Fundraiser>,
+    #[account(mut)]
+    pub fundraiser_config: Account<'info, Fundraiser>,
 
-        #[account(mut)]
-        pub contributor_token_account: Account<'info, TokenAccount>,
-        
-        #[account(mut)]
-        pub sol_token_vault: Box<Account<'info, TokenAccount>>,
+    #[account(mut)]
+    pub contributor_token_account: Account<'info, TokenAccount>,
+    
+    #[account(mut)]
+    pub sol_token_vault: Box<Account<'info, TokenAccount>>,
 
-        #[account(mut)]
-        pub contributor: Signer<'info>,
-        pub system_program: Program<'info, System>,
-        ///CHECK: do not read or write to this program
-        pub token_program: AccountInfo<'info>,
+    #[account(mut)]
+    pub contributor: Signer<'info>,
+    pub system_program: Program<'info, System>,
+    ///CHECK: do not read or write to this program
+    pub token_program: AccountInfo<'info>,
     }
 
 
