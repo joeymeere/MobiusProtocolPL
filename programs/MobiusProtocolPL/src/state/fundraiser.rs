@@ -13,9 +13,9 @@ pub struct Fundraiser {
   //end of fundraising campaign 
   pub end_time: u64,
   //stores sol contributions from contributors
-  pub sol_token_vault: Pubkey,
-  //token vault bump 
-  pub sol_token_vault_bump: u8,  
+  // pub sol_token_vault: Pubkey,
+  // //soltoken vault bump 
+  // pub sol_token_vault_bump: u8,  
   //fundraisers sol token account 
   pub fundraiser_sol_token_account: Pubkey,
 }
