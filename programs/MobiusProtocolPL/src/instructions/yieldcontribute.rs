@@ -43,7 +43,8 @@ pub struct YieldContribute {
         pub clock: Clock<'info>,
         //Token program id.
         pub token_program: AccountInfo<'info>,
-        pub token_vault: Account<'info, TokenAccount>,
+        pub token_vault: Box<Account<'info, TokenAccount>>,
+        pub collateral_token_vault: Box<Account<'info, TokenAccount>>,
         pub system_program: Program<'info, System>,
     }
 
@@ -55,12 +56,12 @@ impl<'info> YieldContribute<'info> {
         contributor.contribution_pool = *ctx.accounts.donation_pool.to_account_info().key;
         contributor.authority = *ctx.accounts.authority.key;
         contributor.balance_deposited = 0;
+        contributor.user_deposit_count = 0;
         contributor.nonce = nonce;
 
         let pool = &mut ctx.accounts.contribution_pool;
-        contributor.user_deposit_count = pool.user_deposit_count.checked_add(1).unwrap();
     }
-
+/* 
     fn select(&mut self, amount: u64, select_token: u8) {
         match select_token {
             1 => {
@@ -78,22 +79,37 @@ impl<'info> YieldContribute<'info> {
             _ => Err(ProgramError::Custom(1)),
           }.unwrap();
       }
+*/
+      fn deposit(&mut self, amount: u64) {
 
-      fn yield_contribute(&mut self) {
+        let contributor = self.contributor;
+
+        let cpi_ctx = deposit_reserve_liquidity{
+          program_id: Pubkey::from_str(DEVNET_SOLEND_PROGRAM).unwrap(),
+          liquidity_amount: amount,
+          source_liquidity_pubkey: contributor.to_account_info(),
+          destination_collateral_pubkey: collateral_token_vault,
+          reserve_pubkey: Pubkey::from_str(DEVNET_SOLEND_SOL_RESERVE).unwrap(),
+          reserve_liquidity_supply_pubkey: Pubkey::from_str(DEVNET_SOLEND_CSOL_LIQUIDITY_SUPPLY).unwrap(),
+          reserve_collateral_mint_pubkey: Pubkey::from_str(DEVNET_SOLEND_CSOL_COLLATERAL_MINT).unwrap(),
+          lending_market_pubkey: Pubkey::from_str(DEVNET_SOLEND_LENDING_MARKET).unwrap(),
+          user_transfer_authority_pubkey: contributor.to_account_info(),
+        };
         solend_utils::solend_deposit_sol_reserve_liquidity(&amount);
+
+        contributor.user_deposit_count = pool.user_deposit_count.checked_add(1).unwrap();
       }
 
       fn transfer_interest (amount: u64) {
-
         let interest = ctx.accounts.token_vault.amount - pool.balance_deposited as u128;
 
       }
 }
 
 pub fn handler(ctx: Context<StdContribute>, amount: u64, select_token: u8) {
-    ctx.accounts.select(amount, select_token);
+    //ctx.accounts.select(amount, select_token);
 
-    ctx.accounts.yield_contribute(amount);
+    ctx.accounts.deposit(amount);
 
     ctx.accounts.transfer_interest(interest);
 

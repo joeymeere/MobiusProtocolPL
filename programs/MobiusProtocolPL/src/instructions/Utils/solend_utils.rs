@@ -31,7 +31,7 @@ pub fn devnet_solend_deposit_sol_reserve_liquidity(
         user_transfer_authority_pubkey,
     );
 
-    anchor_lang::solana_program::program::invoke_signed(&ix, &[], signers_seeds)?;
+    //anchor_lang::solana_program::program::invoke_signed(&ix, &[], signers_seeds)?;
 
     Ok(())
 }
