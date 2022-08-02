@@ -161,10 +161,34 @@ describe("mobius", () => {
     assert.ok(_solTokenVault.owner.equals(vault_authority_pda));
   });
 
-  // it('does standard contribution', async () => {
+  it('does standard contribution', async () => {
+
+    //step 1 : pass in accounts required for function 
+    await th.methods
+      .stdContribute(new BN(100))
+      .accounts({
+        contributorConfig: ,
+        fundraiserConfig: fundraiserConfig.publicKey,
+        contributorTokenAccount: contributor1TokenAccount,
+        solTokenVault: solTokenVault,
+        contributor: contributor1.publicKey,
+        systemProgram: SystemProgram.programId,
+        rent: anchor.web3.SYSVAR_RENT_PUBKEY,
+        tokenProgram: TOKEN_PROGRAM_ID
+      })
+      .signers([contributor1])
+      .rpc()
+      .catch(console.error);
+
+    //step 2 : fetch the accounts 
+    const fundraiserAcc = await th.account.fundraiser.fetch(fundraiserConfig.publicKey);
+    const _solTokenVault = await getAccount(provider.connection, solTokenVault);
+    const contributorAcc = await th.account.contributorConfig.fetch();
+
+    //step 3: check that the account state is as expected after passing thru written program instruction
 
 
-  // });
+  });
 
 
 

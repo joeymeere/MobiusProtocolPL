@@ -14,7 +14,7 @@ pub struct StdContribute<'info> {
         constraint = Clock::get().unwrap().unix_timestamp < fundraiser_config.end_time.try_into().unwrap(),
         constraint = Clock::get().unwrap().unix_timestamp >= fundraiser_config.start_time.try_into().unwrap(),
     )]
-        pub contributor_config: Account<'info, Contributor>,
+    pub contributor_config: Account<'info, Contributor>,
 
     #[account(mut)]
     pub fundraiser_config: Account<'info, Fundraiser>,

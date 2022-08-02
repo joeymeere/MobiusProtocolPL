@@ -27,15 +27,15 @@ pub mod mobius_protocol_pl {
         )
     }
 
-    // pub fn std_contribute(
-    //     ctx: Context<StdContribute>, 
-    //     amount: u64, 
-    // ) -> Result<()> {
-    //     instructions::std_contribute::handler(
-    //         ctx,
-    //         amount,  
-    //     );
-    //     Ok(())
-    // }
+    pub fn std_contribute(
+        ctx: Context<StdContribute>, 
+        amount: u64, 
+    ) -> Result<()> {
+        instructions::std_contribute::handler(
+            ctx,
+            amount,  
+        );
+        Ok(())
+    }
 
 }

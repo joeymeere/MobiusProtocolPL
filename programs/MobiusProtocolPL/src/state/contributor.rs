@@ -6,10 +6,6 @@ pub struct Contributor {
   pub contributor: Pubkey,
   // sol qty 
   pub sol_contributions: u64,
-  // usdc qty 
-  // pub usdc_contributions: u128,
-  //contributor config
-  pub fundraiser_config: Pubkey,
 }
 
 impl Contributor {
