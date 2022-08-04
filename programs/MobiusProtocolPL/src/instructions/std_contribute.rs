@@ -27,7 +27,9 @@ pub struct StdContribute<'info> {
 
     #[account(mut)]
     pub contributor: Signer<'info>,
+    
     pub system_program: Program<'info, System>,
+    pub rent: Sysvar<'info, Rent>,
     ///CHECK: do not read or write to this program
     pub token_program: AccountInfo<'info>,
     }

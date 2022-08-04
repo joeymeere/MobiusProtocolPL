@@ -18,7 +18,7 @@ describe("mobius", () => {
 
   const th = anchor.workspace.MobiusProtocolPl as Program<MobiusProtocolPl>;
 
-  //simulate sol token 
+  //create token accounts / mints 
   let solMint = null;
   let fundraiserSolTokenAccount = null;
   let contributor1TokenAccount = null;
@@ -26,11 +26,15 @@ describe("mobius", () => {
   let solTokenVault = null;
   let vault_authority_pda: PublicKey = null;
 
+  //const donator amount 
+
+
   //generate fundraiser and contributors keypairs  
   const fundraiser = anchor.web3.Keypair.generate();
   const contributor1 = anchor.web3.Keypair.generate();
   const contributor2 = anchor.web3.Keypair.generate();
   const fundraiserConfig = anchor.web3.Keypair.generate();
+  const contributorConfig = anchor.web3.Keypair.generate();
 
   it("Initialize token accounts", async () => {
 
@@ -66,6 +70,11 @@ describe("mobius", () => {
           SystemProgram.transfer({
             fromPubkey: fundraiser.publicKey,
             toPubkey: fundraiserConfig.publicKey,
+            lamports: 100000000,
+          }),
+          SystemProgram.transfer({
+            fromPubkey: fundraiser.publicKey,
+            toPubkey: contributorConfig.publicKey,
             lamports: 100000000,
           }),
         );
@@ -113,6 +122,25 @@ describe("mobius", () => {
       contributor2,
       solMint,
       contributor2.publicKey
+    );
+
+    //mint to contributor token accounts 
+    await mintTo(
+      provider.connection,
+      fundraiser,
+      solMint,
+      contributor1TokenAccount,
+      fundraiser,
+      30
+    );
+
+    await mintTo(
+      provider.connection,
+      fundraiser,
+      solMint,
+      contributor2TokenAccount,
+      fundraiser,
+      20
     );
   });
 
@@ -167,7 +195,7 @@ describe("mobius", () => {
     await th.methods
       .stdContribute(new BN(100))
       .accounts({
-        contributorConfig: ,
+        contributorConfig: contributorConfig.publicKey,
         fundraiserConfig: fundraiserConfig.publicKey,
         contributorTokenAccount: contributor1TokenAccount,
         solTokenVault: solTokenVault,
@@ -183,7 +211,7 @@ describe("mobius", () => {
     //step 2 : fetch the accounts 
     const fundraiserAcc = await th.account.fundraiser.fetch(fundraiserConfig.publicKey);
     const _solTokenVault = await getAccount(provider.connection, solTokenVault);
-    const contributorAcc = await th.account.contributorConfig.fetch();
+    const contributorAcc = await th.account.contributor.fetch(contributorConfig.publicKey);
 
     //step 3: check that the account state is as expected after passing thru written program instruction
 
