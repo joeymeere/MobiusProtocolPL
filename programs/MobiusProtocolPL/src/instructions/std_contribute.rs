@@ -14,20 +14,20 @@ pub struct StdContribute<'info> {
         constraint = Clock::get().unwrap().unix_timestamp < fundraiser_config.end_time.try_into().unwrap(),
         constraint = Clock::get().unwrap().unix_timestamp >= fundraiser_config.start_time.try_into().unwrap(),
     )]
-    pub contributor_config: Account<'info, Contributor>,
+    pub contributor_config: Box<Account<'info, Contributor>>,
 
     #[account(mut)]
-    pub fundraiser_config: Account<'info, Fundraiser>,
+    pub fundraiser_config: Box<Account<'info, Fundraiser>>,
 
     #[account(mut)]
-    pub contributor_token_account: Account<'info, TokenAccount>,
+    pub contributor_token_account: Box<Account<'info, TokenAccount>>,
     
     #[account(mut)]
     pub sol_token_vault: Box<Account<'info, TokenAccount>>,
 
     #[account(mut)]
     pub contributor: Signer<'info>,
-    
+
     pub system_program: Program<'info, System>,
     pub rent: Sysvar<'info, Rent>,
     ///CHECK: do not read or write to this program

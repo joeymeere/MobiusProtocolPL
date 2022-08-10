@@ -193,7 +193,7 @@ describe("mobius", () => {
 
     //step 1 : pass in accounts required for function 
     await th.methods
-      .stdContribute(new BN(100))
+      .stdContribute(new BN(10))
       .accounts({
         contributorConfig: contributorConfig.publicKey,
         fundraiserConfig: fundraiserConfig.publicKey,
@@ -204,7 +204,7 @@ describe("mobius", () => {
         rent: anchor.web3.SYSVAR_RENT_PUBKEY,
         tokenProgram: TOKEN_PROGRAM_ID
       })
-      .signers([contributor1])
+      .signers([contributor1, contributorConfig])
       .rpc()
       .catch(console.error);
 
@@ -214,7 +214,9 @@ describe("mobius", () => {
     const contributorAcc = await th.account.contributor.fetch(contributorConfig.publicKey);
 
     //step 3: check that the account state is as expected after passing thru written program instruction
-
+    assert.ok(Number(_solTokenVault.amount) == 10);
+    assert.ok(fundraiserAcc.solQty.toNumber() == 10);
+    assert.ok(contributorAcc.solContributions.toNumber() == 10);
 
   });
 
