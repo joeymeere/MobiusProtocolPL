@@ -9,9 +9,9 @@ pub struct Fundraiser {
   //mint of sol 
   pub sol_mint: Pubkey,
   //start of fundraising campaign
-  pub start_time: u64,
-  //end of fundraising campaign 
-  pub end_time: u64,
+  // pub start_time: u64,
+  // //end of fundraising campaign 
+  // pub end_time: u64,
   //stores sol contributions from contributors
   // pub sol_token_vault: Pubkey,
   // //soltoken vault bump 

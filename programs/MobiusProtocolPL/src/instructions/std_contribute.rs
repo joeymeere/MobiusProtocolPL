@@ -11,8 +11,8 @@ pub struct StdContribute<'info> {
         init,
         payer = contributor, 
         space = 8 + 32 + 8,
-        constraint = Clock::get().unwrap().unix_timestamp < fundraiser_config.end_time.try_into().unwrap(),
-        constraint = Clock::get().unwrap().unix_timestamp >= fundraiser_config.start_time.try_into().unwrap(),
+        // constraint = Clock::get().unwrap().unix_timestamp < fundraiser_config.end_time.try_into().unwrap(),
+        // constraint = Clock::get().unwrap().unix_timestamp >= fundraiser_config.start_time.try_into().unwrap(),
     )]
     pub contributor_config: Box<Account<'info, Contributor>>,
 

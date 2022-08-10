@@ -13,15 +13,15 @@ pub mod mobius_protocol_pl {
 
     pub fn create_fundraiser(
         ctx: Context<CreateCampaign>, 
-        start: u64, 
-        end: u64, 
+        // start: u64, 
+        // end: u64, 
         // sol_token_vault_bump: u8,
         // usdc_token_vault_bump: u8,
     ) -> Result<()> {
         instructions::create_fundraiser::handler(
             ctx, 
-            start, 
-            end, 
+            // start, 
+            // end, 
             // sol_token_vault_bump,
             // usdc_token_vault_bump,
         )

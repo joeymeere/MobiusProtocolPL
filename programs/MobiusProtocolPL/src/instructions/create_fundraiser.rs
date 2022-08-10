@@ -7,11 +7,11 @@ use spl_token::instruction::AuthorityType;
 #[derive(Accounts)]
 pub struct CreateCampaign<'info> {
   // discriminator + pubkey * 4 + u128 * 2 + u64 * 2 + U8 * 2
-  #[account(init, payer = fundraiser, space = 8 + (32 * 4) + 16 + (8 * 2) + 1)]
+  #[account(init, payer = fundraiser, space = 8 + (32 * 4) + 16 + 1)]
   pub fundraiser_config: Box<Account<'info, Fundraiser>>,
 
   #[account(mut)]
-  pub fundraiser: Signer<'info>,
+  pub fundraiser: Signer<'info>,  
 
   #[account(mut)]
   pub fundraiser_sol_token_account: Box<Account<'info, TokenAccount>>,
@@ -29,12 +29,8 @@ impl<'info> CreateCampaign<'info> {
   // implement required functions for CreateGame struct
   fn set_fundraiser_config(
     &mut self, 
-    start: u64, 
-    end: u64, 
   ) {
     self.fundraiser_config.fundraiser = *self.fundraiser.to_account_info().key;
-    self.fundraiser_config.start_time = start;
-    self.fundraiser_config.end_time = end;
     self.fundraiser_config.sol_qty = 0;
     // self.fundraiser_config.sol_token_vault = *self.sol_token_vault.to_account_info().key;
   }
@@ -63,14 +59,9 @@ impl<'info> CreateCampaign<'info> {
 
 pub fn handler(
   ctx: Context<CreateCampaign>, 
-  start: u64, 
-  end: u64, 
 ) -> Result<()> {
   // core instruction to allow hosts to create a game account
-  ctx.accounts.set_fundraiser_config(
-    start, 
-    end, 
-  );
+  ctx.accounts.set_fundraiser_config();
   ctx.accounts.set_authority_sol_token_vault(ctx.program_id);
   Ok(())
 }

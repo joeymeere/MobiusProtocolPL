@@ -146,14 +146,14 @@ describe("mobius", () => {
 
   it('creates fundraiser', async () => {
 
-    const _START_TIME = Math.ceil(Date.now() / 1000 + 5);
+    // const _START_TIME = Math.ceil(Date.now() / 1000 + 5);
 
     // testing purposes for checking if any acocunts are missing... 
     // console.log(fundraiser.publicKey.toBase58());
 
     // step 1 : pass in accounts created at the start 
     await th.methods
-      .createFundraiser(new BN(_START_TIME), new BN(2000000000))
+      .createFundraiser()
       .accounts({
         fundraiserConfig: fundraiserConfig.publicKey,
         fundraiser: fundraiser.publicKey,
@@ -173,8 +173,8 @@ describe("mobius", () => {
 
     // step 3 : check that the account state is as expected after passing thru written program instruction
     assert.equal(fundraiserAcc.fundraiser.toBase58(), fundraiser.publicKey.toBase58())
-    assert.ok(fundraiserAcc.startTime.toNumber() == _START_TIME)
-    assert.ok(fundraiserAcc.endTime.toNumber() == 2000000000)
+    // assert.ok(fundraiserAcc.startTime.toNumber() == _START_TIME)
+    // assert.ok(fundraiserAcc.endTime.toNumber() == 2000000000)
 
     const [_vault_authority_pda, _vault_authority_bump] = await PublicKey.findProgramAddress(
       [
