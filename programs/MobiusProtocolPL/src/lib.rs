@@ -38,4 +38,15 @@ pub mod mobius_protocol_pl {
         Ok(())
     }
 
+    pub fn fundraiser_withdrawal(
+        ctx: Context<FundraiserWithdrawal>, 
+        amount: u64, 
+    ) -> Result<()> {
+        instructions::fundraiser_withdrawal::handler(
+            ctx,
+            amount,  
+        );
+        Ok(())
+    }
+
 }
