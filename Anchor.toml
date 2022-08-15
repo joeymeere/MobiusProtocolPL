@@ -3,11 +3,15 @@ seeds = false
 [programs.localnet]
 mobius_protocol_pl = "5izPbb651w3ZUTgNZnUpmF2bRdzmePAwz4xcnK4NNbEx"
 
+[programs.devnet]
+mobius_protocol_pl = "5izPbb651w3ZUTgNZnUpmF2bRdzmePAwz4xcnK4NNbEx"
+
+
 [registry]
 url = "https://anchor.projectserum.com"
 
 [provider]
-cluster = "localnet"
+cluster = "devnet"
 wallet = "/root/.config/solana/id.json"
 
 [scripts]
