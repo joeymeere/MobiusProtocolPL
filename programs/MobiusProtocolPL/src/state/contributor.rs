@@ -8,6 +8,3 @@ pub struct Contributor {
   pub sol_contributions: u64,
 }
 
-impl Contributor {
-  // leave empty
-}
