@@ -3,7 +3,7 @@ use anchor_lang::prelude::*;
 #[account]
 pub struct Fundraiser {
   //token vault 
-  pub token_vault: Pubkey
+  pub token_vault: Pubkey,
   //fundraiser pubkey
   pub fundraiser: Pubkey,
   // amount of sol contributions 

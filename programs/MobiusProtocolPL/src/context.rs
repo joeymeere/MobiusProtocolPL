@@ -1,6 +1,8 @@
 use anchor_lang::prelude::*;
 use anchor_spl::token::{self, Mint, Token, TokenAccount, Transfer};
 
+use crate::state::*;
+
 #[derive(Accounts)]
 pub struct CreateCampaign<'info> {
   // discriminator + pubkey * 3 + u64 * 2 

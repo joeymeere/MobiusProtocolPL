@@ -29,19 +29,19 @@ pub mod mobius_protocol_pl {
         fundraiser_config.goal = goal;
         //set authority     
         let (vault_authority, _vault_authority_bump) = Pubkey::find_program_address(
-            &[ESCROW_PDA_SEED, accounts.fundraiser_config.to_account_info()],
-            program_id,
+            &[ESCROW_PDA_SEED, ctx.accounts.fundraiser_config.to_account_info().key.as_ref()],
+            ctx.program_id,
         );
         let cpi_accounts = SetAuthority {
-            account_or_mint: accounts.token_vault.to_account_info().clone(),
-            current_authority: accounts.fundraiser_config.to_account_info().clone(),
+            account_or_mint: ctx.accounts.token_vault.to_account_info().clone(),
+            current_authority: ctx.accounts.fundraiser_config.to_account_info().clone(),
         };
         token::set_authority(
-            CpiContext::new(accounts.token_program.clone(), cpi_accounts),
+            CpiContext::new(ctx.accounts.token_program.clone(), cpi_accounts),
             AuthorityType::AccountOwner,
             Some(vault_authority),
-        )
-        .unwrap();
+        )?;
+        Ok(())
     }
 
     // pub fn std_contribute(
