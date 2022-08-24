@@ -153,12 +153,12 @@ describe("mobius", () => {
 
     // step 1 : pass in accounts created at the start 
     await th.methods
-      .createFundraiser()
+      .createFundraiser(new BN(20))
       .accounts({
         fundraiserConfig: fundraiserConfig.publicKey,
         fundraiser: fundraiser.publicKey,
-        solTokenVault: solTokenVault,
         fundraiserSolTokenAccount: fundraiserSolTokenAccount,
+        tokenVault: solTokenVault,
         systemProgram: SystemProgram.programId,
         rent: anchor.web3.SYSVAR_RENT_PUBKEY,
         tokenProgram: TOKEN_PROGRAM_ID
@@ -173,8 +173,10 @@ describe("mobius", () => {
 
     // step 3 : check that the account state is as expected after passing thru written program instruction
     assert.equal(fundraiserAcc.fundraiser.toBase58(), fundraiser.publicKey.toBase58())
-    // assert.ok(fundraiserAcc.startTime.toNumber() == _START_TIME)
-    // assert.ok(fundraiserAcc.endTime.toNumber() == 2000000000)
+    assert.ok(fundraiserAcc.goal.toNumber() == 20)
+    assert.equal(fundraiserAcc.tokenVault.toBase58(), solTokenVault.toBase58())
+    assert.equal(fundraiserAcc.fundraiserSolTokenAccount.toBase58(), fundraiserSolTokenAccount.toBase58())
+
 
     const [_vault_authority_pda, _vault_authority_bump] = await PublicKey.findProgramAddress(
       [
@@ -189,36 +191,36 @@ describe("mobius", () => {
     assert.ok(_solTokenVault.owner.equals(vault_authority_pda));
   });
 
-  it('does standard contribution', async () => {
+  // it('does standard contribution', async () => {
 
-    //step 1 : pass in accounts required for function 
-    await th.methods
-      .stdContribute(new BN(10))
-      .accounts({
-        contributorConfig: contributorConfig.publicKey,
-        fundraiserConfig: fundraiserConfig.publicKey,
-        contributorTokenAccount: contributor1TokenAccount,
-        solTokenVault: solTokenVault,
-        contributor: contributor1.publicKey,
-        systemProgram: SystemProgram.programId,
-        rent: anchor.web3.SYSVAR_RENT_PUBKEY,
-        tokenProgram: TOKEN_PROGRAM_ID
-      })
-      .signers([contributor1, contributorConfig])
-      .rpc()
-      .catch(console.error);
+  //   //step 1 : pass in accounts required for function 
+  //   await th.methods
+  //     .stdContribute(new BN(10))
+  //     .accounts({
+  //       contributorConfig: contributorConfig.publicKey,
+  //       fundraiserConfig: fundraiserConfig.publicKey,
+  //       contributorTokenAccount: contributor1TokenAccount,
+  //       solTokenVault: solTokenVault,
+  //       contributor: contributor1.publicKey,
+  //       systemProgram: SystemProgram.programId,
+  //       rent: anchor.web3.SYSVAR_RENT_PUBKEY,
+  //       tokenProgram: TOKEN_PROGRAM_ID
+  //     })
+  //     .signers([contributor1, contributorConfig])
+  //     .rpc()
+  //     .catch(console.error);
 
-    //step 2 : fetch the accounts 
-    const fundraiserAcc = await th.account.fundraiser.fetch(fundraiserConfig.publicKey);
-    const _solTokenVault = await getAccount(provider.connection, solTokenVault);
-    const contributorAcc = await th.account.contributor.fetch(contributorConfig.publicKey);
+  //   //step 2 : fetch the accounts 
+  //   const fundraiserAcc = await th.account.fundraiser.fetch(fundraiserConfig.publicKey);
+  //   const _solTokenVault = await getAccount(provider.connection, solTokenVault);
+  //   const contributorAcc = await th.account.contributor.fetch(contributorConfig.publicKey);
 
-    //step 3: check that the account state is as expected after passing thru written program instruction
-    assert.ok(Number(_solTokenVault.amount) == 10);
-    assert.ok(fundraiserAcc.solQty.toNumber() == 10);
-    assert.ok(contributorAcc.solContributions.toNumber() == 10);
+  //   //step 3: check that the account state is as expected after passing thru written program instruction
+  //   assert.ok(Number(_solTokenVault.amount) == 10);
+  //   assert.ok(fundraiserAcc.solQty.toNumber() == 10);
+  //   assert.ok(contributorAcc.solContributions.toNumber() == 10);
 
-  });
+  // });
 
   // it('does fundraiser withdrawal', async () => {
 
