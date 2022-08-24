@@ -90,3 +90,90 @@ pub struct FundraiserWithdrawal<'info> {
     ///CHECK: do not read or write to this program
     pub token_program: AccountInfo<'info>,
 }
+
+#[derive(Accounts)]
+pub struct YieldContribute<'info> {
+    #[account(init,
+    payer = contributor, 
+    space = 50,
+    )]
+    pub contributor_config: Box<Account<'info, Contributor>>,
+
+    #[account(mut)]
+    pub fundraiser_config: Box<Account<'info, Fundraiser>>,
+    ///Source liquidity token account. [writable]
+    ///                $authority can transfer $liquidity_amount.
+    #[account(mut)]
+    pub fundraiser: AccountInfo<'info>,
+    //Destination collateral token account. [writable]
+    #[account(mut)]
+    pub contributor_token_account: Account<'info, TokenAccount>,
+    //Reserve account. [writable]
+    #[account(mut)]
+    pub solend_reserve: AccountInfo<'info>,
+    //Reserve liquidity supply SPL Token account. [writable]
+    #[account(mut)]
+    pub reserve_liqudiity: AccountInfo<'info>,
+    ///Reserve collateral SPL Token mint. [writable]
+    #[account(mut)]
+    pub reserve_mint: AccountInfo<'info>,
+    ///Lending market account.
+    pub lending_market_account: AccountInfo<'info>,
+    ///Derived lending market authority.
+    pub lending_market_auth: AccountInfo<'info>,
+    ///User transfer authority ($authority) [signer].
+    #[account(mut)]
+    pub contributor: Signer<'info>,
+    //Clock sysvar.
+    //pub clock: Clock<'info>,
+    //Token program id.
+    #[account(init,
+        payer = contributor, 
+        space = 50,)]
+    pub collateral_token_vault: Box<Account<'info, TokenAccount>>,
+    pub token_program: AccountInfo<'info>,
+    pub token_vault: Box<Account<'info, TokenAccount>>,
+    pub system_program: Program<'info, System>,
+}
+
+#[derive(Accounts)]
+pub struct YieldWithdraw<'info> {
+    #[account(init,
+    payer = contributor, 
+    space = 50,
+    )]
+    pub contributor_config: Box<Account<'info, Contributor>>,
+
+    #[account(mut)]
+    pub fundraiser_config: Box<Account<'info, Fundraiser>>,
+    ///Source liquidity token account. [writable]
+    ///                $authority can transfer $liquidity_amount.
+    #[account(mut)]
+    pub fundraiser: AccountInfo<'info>,
+    //Destination collateral token account. [writable]
+    #[account(mut)]
+    pub contributor_token_account: Account<'info, TokenAccount>,
+    //Reserve account. [writable]
+    #[account(mut)]
+    pub solend_reserve: AccountInfo<'info>,
+    //Reserve liquidity supply SPL Token account. [writable]
+    #[account(mut)]
+    pub reserve_liqudiity: AccountInfo<'info>,
+    ///Reserve collateral SPL Token mint. [writable]
+    #[account(mut)]
+    pub reserve_mint: AccountInfo<'info>,
+    ///Lending market account.
+    pub lending_market_account: AccountInfo<'info>,
+    ///Derived lending market authority.
+    pub lending_market_auth: AccountInfo<'info>,
+    ///User transfer authority ($authority) [signer].
+    #[account(mut)]
+    pub contributor: Signer<'info>,
+    //Clock sysvar.
+   // pub clock: Clock<'info>,
+    //Token program id.
+    pub token_program: AccountInfo<'info>,
+    pub token_vault: Box<Account<'info, TokenAccount>>,
+    pub collateral_token_vault: Box<Account<'info, TokenAccount>>,
+    pub system_program: Program<'info, System>,
+}
