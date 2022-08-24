@@ -72,11 +72,6 @@ describe("mobius", () => {
             toPubkey: fundraiserConfig.publicKey,
             lamports: 100000000,
           }),
-          SystemProgram.transfer({
-            fromPubkey: fundraiser.publicKey,
-            toPubkey: contributorConfig.publicKey,
-            lamports: 100000000,
-          }),
         );
         return tx;
       })(),
@@ -146,11 +141,6 @@ describe("mobius", () => {
 
   it('creates fundraiser', async () => {
 
-    // const _START_TIME = Math.ceil(Date.now() / 1000 + 5);
-
-    // testing purposes for checking if any acocunts are missing... 
-    // console.log(fundraiser.publicKey.toBase58());
-
     // step 1 : pass in accounts created at the start 
     await th.methods
       .createFundraiser(new BN(20))
@@ -191,36 +181,39 @@ describe("mobius", () => {
     assert.ok(_solTokenVault.owner.equals(vault_authority_pda));
   });
 
-  // it('does standard contribution', async () => {
+  it('join campaign', async () => {
 
-  //   //step 1 : pass in accounts required for function 
-  //   await th.methods
-  //     .stdContribute(new BN(10))
-  //     .accounts({
-  //       contributorConfig: contributorConfig.publicKey,
-  //       fundraiserConfig: fundraiserConfig.publicKey,
-  //       contributorTokenAccount: contributor1TokenAccount,
-  //       solTokenVault: solTokenVault,
-  //       contributor: contributor1.publicKey,
-  //       systemProgram: SystemProgram.programId,
-  //       rent: anchor.web3.SYSVAR_RENT_PUBKEY,
-  //       tokenProgram: TOKEN_PROGRAM_ID
-  //     })
-  //     .signers([contributor1, contributorConfig])
-  //     .rpc()
-  //     .catch(console.error);
+    const [contributor_config_pda, contributor_config_bump] = await anchor.web3.PublicKey.findProgramAddress(
+      [
+        Buffer.from(anchor.utils.bytes.utf8.encode("contributor-fund")),
+        fundraiserConfig.publicKey.toBytes(),
+        contributor1.publicKey.toBytes(),
+      ],
+      th.programId
+    );
 
-  //   //step 2 : fetch the accounts 
-  //   const fundraiserAcc = await th.account.fundraiser.fetch(fundraiserConfig.publicKey);
-  //   const _solTokenVault = await getAccount(provider.connection, solTokenVault);
-  //   const contributorAcc = await th.account.contributor.fetch(contributorConfig.publicKey);
+    //step 1 : pass in accounts required for function 
+    await th.methods
+      .joinFundraiser(new anchor.BN(8))
+      .accounts({
+        contributorConfig: contributor_config_pda,
+        fundraiserConfig: fundraiserConfig.publicKey,
+        contributor: contributor1.publicKey,
+        systemProgram: SystemProgram.programId,
+        rent: anchor.web3.SYSVAR_RENT_PUBKEY,
+      })
+      .signers([contributor1])
+      .rpc()
+      .catch(console.error);
 
-  //   //step 3: check that the account state is as expected after passing thru written program instruction
-  //   assert.ok(Number(_solTokenVault.amount) == 10);
-  //   assert.ok(fundraiserAcc.solQty.toNumber() == 10);
-  //   assert.ok(contributorAcc.solContributions.toNumber() == 10);
+    //step 2 : fetch the accounts 
+    const contributorAcc = await th.account.contributor.fetch(contributor_config_pda);
 
-  // });
+    //step 3: check that the account state is as expected after passing thru written program instruction
+    assert.equal(contributorAcc.fundraiserConfig.toBase58(), fundraiserConfig.publicKey.toBase58())
+    assert.equal(contributorAcc.contributor.toBase58(), contributor1.publicKey.toBase58())
+
+  });
 
   // it('does fundraiser withdrawal', async () => {
 

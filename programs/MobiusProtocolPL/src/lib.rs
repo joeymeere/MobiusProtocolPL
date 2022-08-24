@@ -44,16 +44,17 @@ pub mod mobius_protocol_pl {
         Ok(())
     }
 
-    // pub fn std_contribute(
-    //     ctx: Context<StdContribute>, 
-    //     amount: u64, 
-    // ) -> Result<()> {
-    //     instructions::std_contribute::handler(
-    //         ctx,
-    //         amount,  
-    //     );
-    //     Ok(())
-    // }
+    pub fn join_fundraiser(
+        ctx: Context<JoinCampaign>,  
+        contributor_config_bump : u8
+    ) -> Result<()> {
+        let contributor_config = &mut ctx.accounts.contributor_config;
+        contributor_config.fundraiser_config = ctx.accounts.fundraiser_config.key();
+        contributor_config.contributor = ctx.accounts.contributor.key();
+        contributor_config.sol_contributions = 0;
+        contributor_config.contributor_config_bump = contributor_config_bump;
+        Ok(())
+    }
 
     // pub fn fundraiser_withdrawal(
     //     ctx: Context<FundraiserWithdrawal>, 
