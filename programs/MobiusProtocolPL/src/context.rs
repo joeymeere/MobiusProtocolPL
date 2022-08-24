@@ -49,13 +49,7 @@ pub struct JoinCampaign<'info> {
 pub struct StdContribute<'info> {
 
     //Init contributor program PDA
-    #[account(
-        init,
-        payer = contributor, 
-        space = 8 + 32 + 8,
-        // constraint = Clock::get().unwrap().unix_timestamp < fundraiser_config.end_time.try_into().unwrap(),
-        // constraint = Clock::get().unwrap().unix_timestamp >= fundraiser_config.start_time.try_into().unwrap(),
-    )]
+    #[account(mut)]
     pub contributor_config: Box<Account<'info, Contributor>>,
 
     #[account(mut)]
@@ -65,7 +59,7 @@ pub struct StdContribute<'info> {
     pub contributor_token_account: Box<Account<'info, TokenAccount>>,
     
     #[account(mut)]
-    pub sol_token_vault: Box<Account<'info, TokenAccount>>,
+    pub token_vault: Box<Account<'info, TokenAccount>>,
 
     #[account(mut)]
     pub contributor: Signer<'info>,

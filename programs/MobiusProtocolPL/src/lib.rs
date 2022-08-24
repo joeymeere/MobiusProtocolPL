@@ -54,6 +54,32 @@ pub mod mobius_protocol_pl {
         Ok(())
     }
 
+    pub fn std_contribute(
+        ctx: Context<StdContribute>,
+        amount: u64
+    ) -> Result<()> {
+
+        let contributor_token_amount = ctx.accounts.contributor_token_account.amount;
+
+        if contributor_token_amount > amount {
+                
+            let cpi_ctx = CpiContext::new(
+                ctx.accounts.token_program.to_account_info(),
+                token::Transfer {
+                    from: ctx.accounts.contributor_token_account.to_account_info(),
+                    to: ctx.accounts.token_vault.to_account_info(),
+                    authority: ctx.accounts.contributor.to_account_info(),
+                },
+            );
+
+            token::transfer(cpi_ctx, amount).map_err(|err| println!("{:?}", err)).ok();
+        }
+
+        ctx.accounts.contributor_config.sol_contributions += amount;
+        ctx.accounts.fundraiser_config.sol_qty += amount;
+        Ok(())
+    }
+
     // pub fn fundraiser_withdrawal(
     //     ctx: Context<FundraiserWithdrawal>, 
     //     amount: u64, 
