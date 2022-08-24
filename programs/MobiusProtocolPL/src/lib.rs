@@ -80,15 +80,36 @@ pub mod mobius_protocol_pl {
         Ok(())
     }
 
-    // pub fn fundraiser_withdrawal(
-    //     ctx: Context<FundraiserWithdrawal>, 
-    //     amount: u64, 
-    // ) -> Result<()> {
-    //     instructions::fundraiser_withdrawal::handler(
-    //         ctx,
-    //         amount,  
-    //     );
-    //     Ok(())
-    // }
+    pub fn fundraiser_withdrawal(
+        ctx: Context<FundraiserWithdrawal>, 
+        amount: u64, 
+    ) -> Result<()> {
+
+        let token_vault_qty = ctx.accounts.token_vault.amount;
+
+        let (_vault_authority, _vault_authority_bump) = Pubkey::find_program_address(
+            &[ESCROW_PDA_SEED, ctx.accounts.fundraiser_config.to_account_info().key.as_ref()],
+            ctx.program_id,
+        );
+        let seeds = &[&ESCROW_PDA_SEED[..], &[_vault_authority_bump]];
+        let signer = [&seeds[..]];
+
+        if token_vault_qty >= amount { 
+            let cpi_ctx = CpiContext::new_with_signer(
+                ctx.accounts.token_program.to_account_info(),
+                token::Transfer {
+                    from: ctx.accounts.token_vault.to_account_info(),
+                    to: ctx.accounts.fundraiser_sol_token_account.to_account_info(),
+                    authority: ctx.accounts.vault_authority.to_account_info(),
+                },
+                &signer,
+            );
+
+            token::transfer(cpi_ctx, amount).map_err(|err| println!("{:?}", err)).ok();
+        }    
+
+        ctx.accounts.fundraiser_config.sol_qty -= amount;
+        Ok(())
+    }
 
 }

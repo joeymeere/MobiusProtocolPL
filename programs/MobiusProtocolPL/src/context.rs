@@ -74,16 +74,16 @@ pub struct StdContribute<'info> {
 pub struct FundraiserWithdrawal<'info> {
 
     #[account(mut)]
-    pub vault_pda: Box<Account<'info, TokenAccount>>,
-
-    #[account(mut)]
     pub fundraiser_config: Box<Account<'info, Fundraiser>>,
     
     #[account(mut)]
-    pub sol_token_vault: Box<Account<'info, TokenAccount>>,
+    pub token_vault: Box<Account<'info, TokenAccount>>,
 
     #[account(mut)]
     pub fundraiser_sol_token_account: Box<Account<'info, TokenAccount>>,
+
+    ///CHECK: do not read or write to this program
+    pub vault_authority: AccountInfo<'info>,
 
     pub system_program: Program<'info, System>,
     pub rent: Sysvar<'info, Rent>,

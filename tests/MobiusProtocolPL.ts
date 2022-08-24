@@ -247,5 +247,37 @@ describe("mobius", () => {
 
   });
 
+  it('does fundraiser withdrawl', async () => {
+
+    //step 1 : pass in accounts 
+    await th.methods
+      .fundraiserWithdrawal(new BN(10))
+      .accounts({
+        fundraiserConfig: fundraiserConfig.publicKey,
+        tokenVault: solTokenVault,
+        fundraiserSolTokenAccount: fundraiserSolTokenAccount,
+        vaultAuthority: vault_authority_pda,
+        systemProgram: SystemProgram.programId,
+        rent: anchor.web3.SYSVAR_RENT_PUBKEY,
+        tokenProgram: TOKEN_PROGRAM_ID,
+      })
+      .signers([fundraiserConfig])
+      .rpc()
+      .catch(console.error);
+
+    //step 2 : fetch accounts 
+    const fundraiser_token_account = await getAccount(provider.connection, fundraiserSolTokenAccount);
+    const fundraiserAcc = await th.account.fundraiser.fetch(fundraiserConfig.publicKey);
+    const _solTokenVault = await getAccount(provider.connection, solTokenVault);
+
+    //step 3: check that the account state is as expected after passing thru written program instruction 
+    assert.ok(Number(_solTokenVault.amount) == 0);
+    assert.ok(Number(fundraiserAcc.solQty) == 0);
+    assert.ok(Number(fundraiser_token_account.amount) == 10);
+
+  })
+
+
+
 
 });
