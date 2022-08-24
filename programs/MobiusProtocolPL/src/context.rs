@@ -27,7 +27,7 @@ pub struct CreateCampaign<'info> {
 #[derive(Accounts)]
 pub struct JoinCampaign<'info> {
     #[account(mut)]
-    pub fundraiser_config: Account<'info, Fundraiser>,
+    pub fundraiser_config: Box<Account<'info, Fundraiser>>,
 
     #[account(mut)]
     pub contributor: Signer<'info>,
@@ -36,14 +36,10 @@ pub struct JoinCampaign<'info> {
     // Add in "player-fund" as seed too
     #[account(
         init, 
-        seeds = [b"contributor-fund".as_ref(), 
-                 contributor.to_account_info().key.as_ref(),
-                 fundraiser_config.to_account_info().key.as_ref()],
-        bump,
         payer = contributor,
         space = 8 + (32 * 2) + (8 * 1) + 1,
     )]
-    pub contributor_config: Account<'info, Contributor>,
+    pub contributor_config: Box<Account<'info, Contributor>>,
 
     pub system_program: Program<'info, System>,
     pub rent: Sysvar<'info, Rent>,

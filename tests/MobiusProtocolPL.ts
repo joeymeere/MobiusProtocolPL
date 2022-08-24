@@ -72,6 +72,11 @@ describe("mobius", () => {
             toPubkey: fundraiserConfig.publicKey,
             lamports: 100000000,
           }),
+          SystemProgram.transfer({
+            fromPubkey: fundraiser.publicKey,
+            toPubkey: contributorConfig.publicKey,
+            lamports: 100000000,
+          }),
         );
         return tx;
       })(),
@@ -141,6 +146,11 @@ describe("mobius", () => {
 
   it('creates fundraiser', async () => {
 
+    console.log(fundraiserConfig.publicKey.toBase58());
+    console.log(contributorConfig.publicKey.toBase58());
+    console.log(fundraiserConfig.publicKey.toBase58());
+
+
     // step 1 : pass in accounts created at the start 
     await th.methods
       .createFundraiser(new BN(20))
@@ -183,31 +193,22 @@ describe("mobius", () => {
 
   it('join campaign', async () => {
 
-    const [contributor_config_pda, contributor_config_bump] = await anchor.web3.PublicKey.findProgramAddress(
-      [
-        Buffer.from(anchor.utils.bytes.utf8.encode("contributor-fund")),
-        fundraiserConfig.publicKey.toBytes(),
-        contributor1.publicKey.toBytes(),
-      ],
-      th.programId
-    );
-
     //step 1 : pass in accounts required for function 
     await th.methods
-      .joinFundraiser(new anchor.BN(8))
+      .joinFundraiser()
       .accounts({
-        contributorConfig: contributor_config_pda,
+        contributorConfig: contributorConfig.publicKey,
         fundraiserConfig: fundraiserConfig.publicKey,
         contributor: contributor1.publicKey,
         systemProgram: SystemProgram.programId,
         rent: anchor.web3.SYSVAR_RENT_PUBKEY,
       })
-      .signers([contributor1])
+      .signers([contributor1, contributorConfig])
       .rpc()
       .catch(console.error);
 
     //step 2 : fetch the accounts 
-    const contributorAcc = await th.account.contributor.fetch(contributor_config_pda);
+    const contributorAcc = await th.account.contributor.fetch(contributorConfig.publicKey);
 
     //step 3: check that the account state is as expected after passing thru written program instruction
     assert.equal(contributorAcc.fundraiserConfig.toBase58(), fundraiserConfig.publicKey.toBase58())

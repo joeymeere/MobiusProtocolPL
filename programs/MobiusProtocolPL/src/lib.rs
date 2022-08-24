@@ -46,13 +46,11 @@ pub mod mobius_protocol_pl {
 
     pub fn join_fundraiser(
         ctx: Context<JoinCampaign>,  
-        contributor_config_bump : u8
     ) -> Result<()> {
         let contributor_config = &mut ctx.accounts.contributor_config;
         contributor_config.fundraiser_config = ctx.accounts.fundraiser_config.key();
         contributor_config.contributor = ctx.accounts.contributor.key();
         contributor_config.sol_contributions = 0;
-        contributor_config.contributor_config_bump = contributor_config_bump;
         Ok(())
     }
 

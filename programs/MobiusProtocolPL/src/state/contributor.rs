@@ -8,7 +8,5 @@ pub struct Contributor {
   pub contributor: Pubkey,
   // sol qty 
   pub sol_contributions: u64,
-  //bump 
-  pub contributor_config_bump: u8
 }
 
