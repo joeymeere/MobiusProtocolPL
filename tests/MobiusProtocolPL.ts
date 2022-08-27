@@ -20,14 +20,11 @@ describe("mobius", () => {
 
   //create token accounts / mints 
   let solMint = null;
-  let fundraiserSolTokenAccount = null;
+  let solTokenVault: PublicKey = null;
+  let solTokenVaultBump = null;
+  let fundraiserSolTokenAccount: PublicKey = null;
   let contributor1TokenAccount = null;
   let contributor2TokenAccount = null;
-  let solTokenVault = null;
-  let vault_authority_pda: PublicKey = null;
-
-  //const donator amount 
-
 
   //generate fundraiser and contributors keypairs  
   const fundraiser = anchor.web3.Keypair.generate();
@@ -89,8 +86,24 @@ describe("mobius", () => {
       fundraiser,
       fundraiser.publicKey,
       null,
-      0,
+      0
     );
+
+    // create vault pubkey 
+    [solTokenVault, solTokenVaultBump] = await anchor.web3.PublicKey.findProgramAddress(
+      [
+        Buffer.from('vault'),
+        fundraiserConfig.publicKey.toBytes()
+      ],
+      th.programId
+    );
+
+    // solTokenVault = await createAssociatedTokenAccount(
+    //   provider.connection,
+    //   fundraiser,
+    //   solMint,
+    //   fundraiser.publicKey
+    // );
 
     // create fundraiser sol token account
     fundraiserSolTokenAccount = await createAssociatedTokenAccount(
@@ -98,14 +111,6 @@ describe("mobius", () => {
       fundraiser,
       solMint,
       fundraiser.publicKey
-    );
-
-    // create solTokenVault
-    solTokenVault = await createAssociatedTokenAccount(
-      provider.connection,
-      fundraiser,
-      solMint,
-      fundraiserConfig.publicKey
     );
 
     //create contributor account 
@@ -148,7 +153,7 @@ describe("mobius", () => {
 
     console.log(fundraiserConfig.publicKey.toBase58());
     console.log(contributorConfig.publicKey.toBase58());
-    console.log(fundraiserConfig.publicKey.toBase58());
+    console.log(fundraiser.publicKey.toBase58());
 
 
     // step 1 : pass in accounts created at the start 
@@ -159,6 +164,7 @@ describe("mobius", () => {
         fundraiser: fundraiser.publicKey,
         fundraiserSolTokenAccount: fundraiserSolTokenAccount,
         tokenVault: solTokenVault,
+        solMint: solMint,
         systemProgram: SystemProgram.programId,
         rent: anchor.web3.SYSVAR_RENT_PUBKEY,
         tokenProgram: TOKEN_PROGRAM_ID
@@ -169,26 +175,15 @@ describe("mobius", () => {
 
     // step 2 : fetch the accounts 
     const fundraiserAcc = await th.account.fundraiser.fetch(fundraiserConfig.publicKey);
-    const _solTokenVault = await getAccount(provider.connection, solTokenVault);
+    // const vault = await getAccount(provider.connection, solTokenVault);
 
     // step 3 : check that the account state is as expected after passing thru written program instruction
     assert.equal(fundraiserAcc.fundraiser.toBase58(), fundraiser.publicKey.toBase58())
     assert.ok(fundraiserAcc.goal.toNumber() == 20)
     assert.equal(fundraiserAcc.tokenVault.toBase58(), solTokenVault.toBase58())
+    assert.equal(fundraiserAcc.solMint.toBase58(), solMint.toBase58())
     assert.equal(fundraiserAcc.fundraiserSolTokenAccount.toBase58(), fundraiserSolTokenAccount.toBase58())
 
-
-    const [_vault_authority_pda, _vault_authority_bump] = await PublicKey.findProgramAddress(
-      [
-        Buffer.from(anchor.utils.bytes.utf8.encode("authority-seed")),
-        fundraiserConfig.publicKey.toBytes()
-      ],
-      th.programId
-    );
-
-    vault_authority_pda = _vault_authority_pda;
-
-    assert.ok(_solTokenVault.owner.equals(vault_authority_pda));
   });
 
   it('join campaign', async () => {
@@ -226,6 +221,7 @@ describe("mobius", () => {
         fundraiserConfig: fundraiserConfig.publicKey,
         contributorTokenAccount: contributor1TokenAccount,
         tokenVault: solTokenVault,
+        solMint: solMint,
         contributor: contributor1.publicKey,
         systemProgram: SystemProgram.programId,
         rent: anchor.web3.SYSVAR_RENT_PUBKEY,
@@ -247,7 +243,7 @@ describe("mobius", () => {
 
   });
 
-  it('does fundraiser withdrawl', async () => {
+  it('does fundraiser withdrawal', async () => {
 
     //step 1 : pass in accounts 
     await th.methods
@@ -255,13 +251,13 @@ describe("mobius", () => {
       .accounts({
         fundraiserConfig: fundraiserConfig.publicKey,
         tokenVault: solTokenVault,
+        solMint: solMint,
         fundraiserSolTokenAccount: fundraiserSolTokenAccount,
-        vaultAuthority: vault_authority_pda,
         systemProgram: SystemProgram.programId,
         rent: anchor.web3.SYSVAR_RENT_PUBKEY,
         tokenProgram: TOKEN_PROGRAM_ID,
       })
-      .signers([fundraiserConfig])
+      .signers([fundraiser])
       .rpc()
       .catch(console.error);
 

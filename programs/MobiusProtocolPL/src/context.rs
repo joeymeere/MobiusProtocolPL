@@ -6,7 +6,10 @@ use crate::state::*;
 #[derive(Accounts)]
 pub struct CreateCampaign<'info> {
   // discriminator + pubkey * 3 + u64 * 2 
-  #[account(init, payer = fundraiser, space = 8 + (32 * 3) + (8 * 2))]
+  #[account(init, 
+            payer = fundraiser,
+            space = 8 + (32 * 3) + (8 * 2) + 200,
+    )]
   pub fundraiser_config: Box<Account<'info, Fundraiser>>,
 
   #[account(mut)]
@@ -15,8 +18,18 @@ pub struct CreateCampaign<'info> {
   #[account(mut)]
   pub fundraiser_sol_token_account: Box<Account<'info, TokenAccount>>,
 
-  #[account(mut)]
+  #[account(
+        init,
+        seeds = [b"vault", fundraiser_config.key().as_ref()],
+        bump, 
+        payer = fundraiser,
+        token::mint = sol_mint,
+        token::authority = token_vault
+  )]
   pub token_vault: Box<Account<'info, TokenAccount>>,
+
+  #[account(mut)]
+  pub sol_mint : Box<Account<'info, Mint>>,
 
   pub system_program: Program<'info, System>,
   pub rent: Sysvar<'info, Rent>,
@@ -58,8 +71,15 @@ pub struct StdContribute<'info> {
     #[account(mut)]
     pub contributor_token_account: Box<Account<'info, TokenAccount>>,
     
-    #[account(mut)]
+    #[account(
+        mut,
+        seeds = [b"vault", fundraiser_config.key().as_ref()],
+        bump
+    )]
     pub token_vault: Box<Account<'info, TokenAccount>>,
+
+    #[account(mut)]
+    pub sol_mint: Box<Account<'info, Mint>>,
 
     #[account(mut)]
     pub contributor: Signer<'info>,
@@ -71,19 +91,26 @@ pub struct StdContribute<'info> {
 }
 
 #[derive(Accounts)]
-pub struct FundraiserWithdrawal<'info> {
+pub struct FundraiserWithdrawal<'info> {   
+    
+    #[account(mut)]
+    pub fundraiser: Signer<'info>,
 
     #[account(mut)]
     pub fundraiser_config: Box<Account<'info, Fundraiser>>,
     
-    #[account(mut)]
+    #[account(
+        mut,
+        seeds = [b"vault", fundraiser_config.key().as_ref()],
+        bump
+    )]
     pub token_vault: Box<Account<'info, TokenAccount>>,
 
     #[account(mut)]
-    pub fundraiser_sol_token_account: Box<Account<'info, TokenAccount>>,
+    pub sol_mint: Box<Account<'info, Mint>>,
 
-    ///CHECK: do not read or write to this program
-    pub vault_authority: AccountInfo<'info>,
+    #[account(mut)]
+    pub fundraiser_sol_token_account: Box<Account<'info, TokenAccount>>,
 
     pub system_program: Program<'info, System>,
     pub rent: Sysvar<'info, Rent>,
