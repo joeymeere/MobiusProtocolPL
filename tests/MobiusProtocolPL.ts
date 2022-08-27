@@ -20,11 +20,10 @@ describe("mobius", () => {
 
   //create token accounts / mints 
   let solMint = null;
-  let solTokenVault: PublicKey = null;
-  let solTokenVaultBump = null;
-  let fundraiserSolTokenAccount: PublicKey = null;
+  let solTokenVault = null;
   let contributor1TokenAccount = null;
   let contributor2TokenAccount = null;
+  let fundraiserTokenAccount = null;
 
   //generate fundraiser and contributors keypairs  
   const fundraiser = anchor.web3.Keypair.generate();
@@ -38,7 +37,7 @@ describe("mobius", () => {
     const connection = new Connection("http://127.0.0.1:8899", "confirmed");
     const airdropSignature = await connection.requestAirdrop(
       fundraiser.publicKey,
-      1000000000
+      5000000000
     );
 
     const latestBlockHash = await connection.getLatestBlockhash();
@@ -89,24 +88,7 @@ describe("mobius", () => {
       0
     );
 
-    // create vault pubkey 
-    [solTokenVault, solTokenVaultBump] = await anchor.web3.PublicKey.findProgramAddress(
-      [
-        Buffer.from('vault'),
-        fundraiserConfig.publicKey.toBytes()
-      ],
-      th.programId
-    );
-
-    // solTokenVault = await createAssociatedTokenAccount(
-    //   provider.connection,
-    //   fundraiser,
-    //   solMint,
-    //   fundraiser.publicKey
-    // );
-
-    // create fundraiser sol token account
-    fundraiserSolTokenAccount = await createAssociatedTokenAccount(
+    solTokenVault = await createAssociatedTokenAccount(
       provider.connection,
       fundraiser,
       solMint,
@@ -128,6 +110,14 @@ describe("mobius", () => {
       solMint,
       contributor2.publicKey
     );
+
+    // // create fundraiser sol token account
+    // fundraiserTokenAccount = await createAssociatedTokenAccount(
+    //   provider.connection,
+    //   fundraiser,
+    //   solMint,
+    //   fundraiser.publicKey
+    // );
 
     //mint to contributor token accounts 
     await mintTo(
@@ -162,9 +152,8 @@ describe("mobius", () => {
       .accounts({
         fundraiserConfig: fundraiserConfig.publicKey,
         fundraiser: fundraiser.publicKey,
-        fundraiserSolTokenAccount: fundraiserSolTokenAccount,
+        fundraiserTokenAccount: fundraiserTokenAccount,
         tokenVault: solTokenVault,
-        solMint: solMint,
         systemProgram: SystemProgram.programId,
         rent: anchor.web3.SYSVAR_RENT_PUBKEY,
         tokenProgram: TOKEN_PROGRAM_ID
@@ -181,97 +170,95 @@ describe("mobius", () => {
     assert.equal(fundraiserAcc.fundraiser.toBase58(), fundraiser.publicKey.toBase58())
     assert.ok(fundraiserAcc.goal.toNumber() == 20)
     assert.equal(fundraiserAcc.tokenVault.toBase58(), solTokenVault.toBase58())
-    assert.equal(fundraiserAcc.solMint.toBase58(), solMint.toBase58())
-    assert.equal(fundraiserAcc.fundraiserSolTokenAccount.toBase58(), fundraiserSolTokenAccount.toBase58())
+    // assert.equal(fundraiserAcc.solMint.toBase58(), solMint.toBase58())
+    assert.equal(fundraiserAcc.fundraiserTokenAccount.toBase58(), fundraiserTokenAccount.toBase58())
 
   });
 
-  it('join campaign', async () => {
+  // it('join campaign', async () => {
 
-    //step 1 : pass in accounts required for function 
-    await th.methods
-      .joinFundraiser()
-      .accounts({
-        contributorConfig: contributorConfig.publicKey,
-        fundraiserConfig: fundraiserConfig.publicKey,
-        contributor: contributor1.publicKey,
-        systemProgram: SystemProgram.programId,
-        rent: anchor.web3.SYSVAR_RENT_PUBKEY,
-      })
-      .signers([contributor1, contributorConfig])
-      .rpc()
-      .catch(console.error);
+  //   //step 1 : pass in accounts required for function 
+  //   await th.methods
+  //     .joinFundraiser()
+  //     .accounts({
+  //       contributorConfig: contributorConfig.publicKey,
+  //       fundraiserConfig: fundraiserConfig.publicKey,
+  //       contributor: contributor1.publicKey,
+  //       systemProgram: SystemProgram.programId,
+  //       rent: anchor.web3.SYSVAR_RENT_PUBKEY,
+  //     })
+  //     .signers([contributor1, contributorConfig])
+  //     .rpc()
+  //     .catch(console.error);
 
-    //step 2 : fetch the accounts 
-    const contributorAcc = await th.account.contributor.fetch(contributorConfig.publicKey);
+  //   //step 2 : fetch the accounts 
+  //   const contributorAcc = await th.account.contributor.fetch(contributorConfig.publicKey);
 
-    //step 3: check that the account state is as expected after passing thru written program instruction
-    assert.equal(contributorAcc.fundraiserConfig.toBase58(), fundraiserConfig.publicKey.toBase58())
-    assert.equal(contributorAcc.contributor.toBase58(), contributor1.publicKey.toBase58())
+  //   //step 3: check that the account state is as expected after passing thru written program instruction
+  //   assert.equal(contributorAcc.fundraiserConfig.toBase58(), fundraiserConfig.publicKey.toBase58())
+  //   assert.equal(contributorAcc.contributor.toBase58(), contributor1.publicKey.toBase58())
 
-  });
+  // });
 
-  it('does fundraiser contribution', async () => {
+  // it('does fundraiser contribution', async () => {
 
-    //step 1 : pass in accounts required for function   
-    await th.methods
-      .stdContribute(new BN(10))
-      .accounts({
-        contributorConfig: contributorConfig.publicKey,
-        fundraiserConfig: fundraiserConfig.publicKey,
-        contributorTokenAccount: contributor1TokenAccount,
-        tokenVault: solTokenVault,
-        solMint: solMint,
-        contributor: contributor1.publicKey,
-        systemProgram: SystemProgram.programId,
-        rent: anchor.web3.SYSVAR_RENT_PUBKEY,
-        tokenProgram: TOKEN_PROGRAM_ID
-      })
-      .signers([contributor1])
-      .rpc()
-      .catch(console.error);
+  //   //step 1 : pass in accounts required for function   
+  //   await th.methods
+  //     .stdContribute(new BN(10))
+  //     .accounts({
+  //       contributorConfig: contributorConfig.publicKey,
+  //       fundraiserConfig: fundraiserConfig.publicKey,
+  //       contributorTokenAccount: contributor1TokenAccount,
+  //       tokenVault: solTokenVault,
+  //       contributor: contributor1.publicKey,
+  //       systemProgram: SystemProgram.programId,
+  //       rent: anchor.web3.SYSVAR_RENT_PUBKEY,
+  //       tokenProgram: TOKEN_PROGRAM_ID
+  //     })
+  //     .signers([contributor1])
+  //     .rpc()
+  //     .catch(console.error);
 
-    //step 2 : fetch the accounts 
-    const _solTokenVault = await getAccount(provider.connection, solTokenVault);
-    const fundraiserAcc = await th.account.fundraiser.fetch(fundraiserConfig.publicKey);
-    const contributorAcc = await th.account.contributor.fetch(contributorConfig.publicKey);
+  //   //step 2 : fetch the accounts 
+  //   const _solTokenVault = await getAccount(provider.connection, solTokenVault);
+  //   const fundraiserAcc = await th.account.fundraiser.fetch(fundraiserConfig.publicKey);
+  //   const contributorAcc = await th.account.contributor.fetch(contributorConfig.publicKey);
 
-    //step 3: check that the account state is as expected after passing thru written program instruction
-    assert.ok(Number(_solTokenVault.amount) == 10);
-    assert.ok(Number(fundraiserAcc.solQty) == 10);
-    assert.ok(Number(contributorAcc.solContributions) == 10);
+  //   //step 3: check that the account state is as expected after passing thru written program instruction
+  //   assert.ok(Number(_solTokenVault.amount) == 10);
+  //   assert.ok(Number(fundraiserAcc.solQty) == 10);
+  //   assert.ok(Number(contributorAcc.solContributions) == 10);
 
-  });
+  // });
 
-  it('does fundraiser withdrawal', async () => {
+  // it('does fundraiser withdrawal', async () => {
 
-    //step 1 : pass in accounts 
-    await th.methods
-      .fundraiserWithdrawal(new BN(10))
-      .accounts({
-        fundraiserConfig: fundraiserConfig.publicKey,
-        tokenVault: solTokenVault,
-        solMint: solMint,
-        fundraiserSolTokenAccount: fundraiserSolTokenAccount,
-        systemProgram: SystemProgram.programId,
-        rent: anchor.web3.SYSVAR_RENT_PUBKEY,
-        tokenProgram: TOKEN_PROGRAM_ID,
-      })
-      .signers([fundraiser])
-      .rpc()
-      .catch(console.error);
+  //   //step 1 : pass in accounts 
+  //   await th.methods
+  //     .fundraiserWithdrawal(new BN(10))
+  //     .accounts({
+  //       fundraiserConfig: fundraiserConfig.publicKey,
+  //       tokenVault: solTokenVault,
+  //       fundraiserSolTokenAccount: fundraiserSolTokenAccount,
+  //       systemProgram: SystemProgram.programId,
+  //       rent: anchor.web3.SYSVAR_RENT_PUBKEY,
+  //       tokenProgram: TOKEN_PROGRAM_ID,
+  //     })
+  //     .signers([fundraiser])
+  //     .rpc()
+  //     .catch(console.error);
 
-    //step 2 : fetch accounts 
-    const fundraiser_token_account = await getAccount(provider.connection, fundraiserSolTokenAccount);
-    const fundraiserAcc = await th.account.fundraiser.fetch(fundraiserConfig.publicKey);
-    const _solTokenVault = await getAccount(provider.connection, solTokenVault);
+  //   //step 2 : fetch accounts 
+  //   const fundraiser_token_account = await getAccount(provider.connection, fundraiserSolTokenAccount);
+  //   const fundraiserAcc = await th.account.fundraiser.fetch(fundraiserConfig.publicKey);
+  //   const _solTokenVault = await getAccount(provider.connection, solTokenVault);
 
-    //step 3: check that the account state is as expected after passing thru written program instruction 
-    assert.ok(Number(_solTokenVault.amount) == 0);
-    assert.ok(Number(fundraiserAcc.solQty) == 0);
-    assert.ok(Number(fundraiser_token_account.amount) == 10);
+  //   //step 3: check that the account state is as expected after passing thru written program instruction 
+  //   assert.ok(Number(_solTokenVault.amount) == 0);
+  //   assert.ok(Number(fundraiserAcc.solQty) == 0);
+  //   assert.ok(Number(fundraiser_token_account.amount) == 10);
 
-  })
+  // })
 
 
 

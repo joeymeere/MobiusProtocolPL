@@ -21,10 +21,10 @@ pub mod mobius_protocol_pl {
         let fundraiser_config = &mut ctx.accounts.fundraiser_config;
         //sets fundraiser config 
         fundraiser_config.token_vault = ctx.accounts.token_vault.key();
-        fundraiser_config.sol_mint = ctx.accounts.sol_mint.key();
+        // fundraiser_config.sol_mint = ctx.accounts.sol_mint.key();
         fundraiser_config.fundraiser = ctx.accounts.fundraiser.key();
         fundraiser_config.sol_qty = 0;
-        fundraiser_config.fundraiser_sol_token_account = ctx.accounts.fundraiser_sol_token_account.key();
+        fundraiser_config.fundraiser_token_account = ctx.accounts.fundraiser_token_account.key();
         fundraiser_config.goal = goal;
         Ok(())
     }
@@ -72,18 +72,18 @@ pub mod mobius_protocol_pl {
 
         let token_vault_qty = ctx.accounts.token_vault.amount;
 
-        let seeds = &[b"vault", ctx.accounts.fundraiser_config.to_account_info().key.as_ref(),  &[*ctx.bumps.get("token_vault").unwrap()]];
-        let signer = [&seeds[..]];
+        // let seeds = &[b"vault", ctx.accounts.fundraiser_config.to_account_info().key.as_ref(),  &[*ctx.bumps.get("token_vault").unwrap()]];
+        // let signer = [&seeds[..]];
 
         if token_vault_qty >= amount { 
-            let cpi_ctx = CpiContext::new_with_signer(
+            let cpi_ctx = CpiContext::new(
                 ctx.accounts.token_program.to_account_info(),
                 token::Transfer {
                     from: ctx.accounts.token_vault.to_account_info(),
-                    to: ctx.accounts.fundraiser_sol_token_account.to_account_info(),
+                    to: ctx.accounts.fundraiser_token_account.to_account_info(),
                     authority: ctx.accounts.token_vault.to_account_info(),
                 },
-                &signer,
+                // &signer,
             );
 
             token::transfer(cpi_ctx, amount).map_err(|err| println!("{:?}", err)).ok();
