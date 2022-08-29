@@ -240,7 +240,7 @@ describe("mobius", () => {
 
     //step 1 : pass in accounts 
     await th.methods
-      .fundraiserWithdrawal(new BN(5))
+      .fundraiserWithdrawal(new BN(10))
       .accounts({
         fundraiserConfig: fundraiserConfig.publicKey,
         tokenVault: solTokenVault,
@@ -256,13 +256,13 @@ describe("mobius", () => {
 
     //step 2 : fetch accounts 
     const fundraiser_token_account = await getAccount(provider.connection, fundraiserTokenAccount);
-    // const fundraiserAcc = await th.account.fundraiser.fetch(fundraiserConfig.publicKey);
-    // const _solTokenVault = await getAccount(provider.connection, solTokenVault);
+    const fundraiserAcc = await th.account.fundraiser.fetch(fundraiserConfig.publicKey);
+    const _solTokenVault = await getAccount(provider.connection, solTokenVault);
 
     //step 3: check that the account state is as expected after passing thru written program instruction 
-    // assert.ok(Number(_solTokenVault.amount) == 0);
-    // assert.ok(Number(fundraiserAcc.solQty) == 0);
-    assert.ok(Number(fundraiser_token_account.amount) == 5);
+    assert.ok(Number(_solTokenVault.amount) == 0);
+    assert.ok(Number(fundraiserAcc.solQty) == 0);
+    assert.ok(Number(fundraiser_token_account.amount) == 10);
 
   })
 
