@@ -4,6 +4,8 @@ use anchor_lang::prelude::*;
 pub struct Fundraiser {
   //token vault 
   pub token_vault: Pubkey,
+  //test sol mint 
+  pub sol_mint: Pubkey,
   //fundraiser pubkey
   pub fundraiser: Pubkey,
   // amount of sol contributions 

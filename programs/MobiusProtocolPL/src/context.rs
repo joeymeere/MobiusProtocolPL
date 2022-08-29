@@ -3,12 +3,12 @@ use anchor_spl::token::{self, Mint, Token, TokenAccount, Transfer};
 
 use crate::state::*;
 
-#[derive(Accounts)]
+#[derive(Accounts)] 
 pub struct CreateCampaign<'info> {
   // discriminator + pubkey * 3 + u64 * 2 
   #[account(init, 
             payer = fundraiser,
-            space = 8 + (32 * 3) + (8 * 2),
+            space = 8 + (32 * 3) + (8 * 2) + 200,
     )]
   pub fundraiser_config: Box<Account<'info, Fundraiser>>,
 
@@ -18,8 +18,18 @@ pub struct CreateCampaign<'info> {
   #[account(mut)]
   pub fundraiser_token_account: Box<Account<'info, TokenAccount>>,
 
-  #[account(mut)]
+  #[account(
+        init,
+        payer = fundraiser, 
+        seeds = [b"vault", fundraiser_config.to_account_info().key.as_ref()],
+        bump,
+        token::mint = sol_mint,
+        token::authority = token_vault
+  )]
   pub token_vault: Box<Account<'info, TokenAccount>>,
+
+  #[account(mut)]
+  pub sol_mint: Account<'info, Mint>,
 
   pub system_program: Program<'info, System>,
   pub rent: Sysvar<'info, Rent>,
@@ -38,7 +48,7 @@ pub struct JoinCampaign<'info> {
     #[account(
         init, 
         payer = contributor,
-        space = 8 + (32 * 2) + (8 * 1),
+        space = 8 + (32 * 3) + (8 * 1),
     )]
     pub contributor_config: Box<Account<'info, Contributor>>,
 
@@ -59,8 +69,15 @@ pub struct StdContribute<'info> {
     #[account(mut)]
     pub contributor_token_account: Box<Account<'info, TokenAccount>>,
     
-    #[account(mut)]
+    #[account(
+        mut,
+        seeds = [b"vault", fundraiser_config.to_account_info().key.as_ref()],
+        bump
+    )]
     pub token_vault: Box<Account<'info, TokenAccount>>,
+
+    #[account(mut)]
+    pub sol_mint: Account<'info, Mint>,
 
     #[account(mut)]
     pub contributor: Signer<'info>,
@@ -75,13 +92,17 @@ pub struct StdContribute<'info> {
 pub struct FundraiserWithdrawal<'info> {   
     
     #[account(mut)]
-    pub fundraiser: Signer<'info>,
-
-    #[account(mut)]
     pub fundraiser_config: Box<Account<'info, Fundraiser>>,
     
-    #[account(mut)]
+    #[account(
+        mut,
+        seeds = [b"vault", fundraiser_config.to_account_info().key.as_ref()],
+        bump
+    )]
     pub token_vault: Box<Account<'info, TokenAccount>>,
+
+    #[account(mut)]
+    pub sol_mint: Account<'info, Mint>,
 
     #[account(mut)]
     pub fundraiser_token_account: Box<Account<'info, TokenAccount>>,
