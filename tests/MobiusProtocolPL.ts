@@ -143,7 +143,7 @@ describe("mobius", () => {
     [solTokenVault, solTokenVaultBump] = await anchor.web3.PublicKey.findProgramAddress(
       [
         Buffer.from('vault'),
-        contributorConfig.publicKey.toBytes()
+        fundraiserConfig.publicKey.toBytes()
       ],
       th.programId
     );
