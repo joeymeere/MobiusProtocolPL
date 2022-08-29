@@ -35,7 +35,9 @@ describe("mobius", () => {
 
   it("Initialize token accounts", async () => {
 
-    const connection = new Connection("http://127.0.0.1:8899", "confirmed");
+    // http://127.0.0.1:8899
+
+    const connection = new Connection("https://api.devnet.solana.com", "confirmed");
     const airdropSignature = await connection.requestAirdrop(
       fundraiser.publicKey,
       5000000000

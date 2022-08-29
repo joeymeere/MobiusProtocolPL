@@ -1,17 +1,17 @@
 [features]
 seeds = false
 [programs.localnet]
-mobius_protocol_pl = "5izPbb651w3ZUTgNZnUpmF2bRdzmePAwz4xcnK4NNbEx"
+mobius_protocol_pl = "w5T16rMein6R3VpPvnuuYyUDZpbGkthR6rXmMfUwp6F"
 
 [programs.devnet]
-mobius_protocol_pl = "5izPbb651w3ZUTgNZnUpmF2bRdzmePAwz4xcnK4NNbEx"
+mobius_protocol_pl = "w5T16rMein6R3VpPvnuuYyUDZpbGkthR6rXmMfUwp6F"
 
 
 [registry]
 url = "https://anchor.projectserum.com"
 
 [provider]
-cluster = "localnet"
+cluster = "devnet"
 wallet = "/root/.config/solana/id.json"
 
 [scripts]

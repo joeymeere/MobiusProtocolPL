@@ -8,7 +8,7 @@ use context::*;
 
 pub mod state;
 
-declare_id!("5izPbb651w3ZUTgNZnUpmF2bRdzmePAwz4xcnK4NNbEx");
+declare_id!("w5T16rMein6R3VpPvnuuYyUDZpbGkthR6rXmMfUwp6F");
 
 #[program]
 pub mod mobius_protocol_pl {
