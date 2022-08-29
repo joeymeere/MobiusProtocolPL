@@ -250,7 +250,7 @@ describe("mobius", () => {
         rent: anchor.web3.SYSVAR_RENT_PUBKEY,
         tokenProgram: TOKEN_PROGRAM_ID,
       })
-      .signers([fundraiser])
+      .signers([])
       .rpc()
       .catch(console.error);
 
