@@ -16,12 +16,17 @@
           "isSigner": true
         },
         {
-          "name": "fundraiserSolTokenAccount",
+          "name": "fundraiserTokenAccount",
           "isMut": true,
           "isSigner": false
         },
         {
-          "name": "solTokenVault",
+          "name": "tokenVault",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "solMint",
           "isMut": true,
           "isSigner": false
         },
@@ -41,6 +46,62 @@
           "isSigner": false
         }
       ],
+      "args": [
+        {
+          "name": "name",
+          "type": "string"
+        },
+        {
+          "name": "description",
+          "type": "string"
+        },
+        {
+          "name": "imageLink",
+          "type": "string"
+        },
+        {
+          "name": "websiteLink",
+          "type": "string"
+        },
+        {
+          "name": "contactLink",
+          "type": "string"
+        },
+        {
+          "name": "goal",
+          "type": "u64"
+        }
+      ]
+    },
+    {
+      "name": "joinFundraiser",
+      "accounts": [
+        {
+          "name": "fundraiserConfig",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "contributor",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "contributorConfig",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "rent",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
       "args": []
     },
     {
@@ -49,7 +110,7 @@
         {
           "name": "contributorConfig",
           "isMut": true,
-          "isSigner": true
+          "isSigner": false
         },
         {
           "name": "fundraiserConfig",
@@ -62,7 +123,12 @@
           "isSigner": false
         },
         {
-          "name": "solTokenVault",
+          "name": "tokenVault",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "solMint",
           "isMut": true,
           "isSigner": false
         },
@@ -98,22 +164,22 @@
       "name": "fundraiserWithdrawal",
       "accounts": [
         {
-          "name": "vaultPda",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
           "name": "fundraiserConfig",
           "isMut": true,
           "isSigner": false
         },
         {
-          "name": "solTokenVault",
+          "name": "tokenVault",
           "isMut": true,
           "isSigner": false
         },
         {
-          "name": "fundraiserSolTokenAccount",
+          "name": "solMint",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "fundraiserTokenAccount",
           "isMut": true,
           "isSigner": false
         },
@@ -148,6 +214,10 @@
         "kind": "struct",
         "fields": [
           {
+            "name": "fundraiserConfig",
+            "type": "publicKey"
+          },
+          {
             "name": "contributor",
             "type": "publicKey"
           },
@@ -164,6 +234,14 @@
         "kind": "struct",
         "fields": [
           {
+            "name": "tokenVault",
+            "type": "publicKey"
+          },
+          {
+            "name": "solMint",
+            "type": "publicKey"
+          },
+          {
             "name": "fundraiser",
             "type": "publicKey"
           },
@@ -172,18 +250,38 @@
             "type": "u64"
           },
           {
-            "name": "solMint",
+            "name": "fundraiserTokenAccount",
             "type": "publicKey"
           },
           {
-            "name": "fundraiserSolTokenAccount",
-            "type": "publicKey"
+            "name": "goal",
+            "type": "u64"
+          },
+          {
+            "name": "name",
+            "type": "string"
+          },
+          {
+            "name": "description",
+            "type": "string"
+          },
+          {
+            "name": "imageLink",
+            "type": "string"
+          },
+          {
+            "name": "websiteLink",
+            "type": "string"
+          },
+          {
+            "name": "contactLink",
+            "type": "string"
           }
         ]
       }
     }
   ],
   "metadata": {
-    "address": "5izPbb651w3ZUTgNZnUpmF2bRdzmePAwz4xcnK4NNbEx"
+    "address": "Cu43CgVYa2Heyn5xN8nm6dBaVYzXGmW3iSpGn9RnTAWP"
   }
 }

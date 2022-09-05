@@ -1,10 +1,10 @@
 [features]
 seeds = false
 [programs.localnet]
-mobius_protocol_pl = "w5T16rMein6R3VpPvnuuYyUDZpbGkthR6rXmMfUwp6F"
+mobius_protocol_pl = "Cu43CgVYa2Heyn5xN8nm6dBaVYzXGmW3iSpGn9RnTAWP"
 
 [programs.devnet]
-mobius_protocol_pl = "w5T16rMein6R3VpPvnuuYyUDZpbGkthR6rXmMfUwp6F"
+mobius_protocol_pl = "Cu43CgVYa2Heyn5xN8nm6dBaVYzXGmW3iSpGn9RnTAWP"
 
 
 [registry]

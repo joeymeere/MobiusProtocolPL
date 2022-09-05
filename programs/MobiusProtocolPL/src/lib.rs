@@ -16,6 +16,11 @@ pub mod mobius_protocol_pl {
 
     pub fn create_fundraiser(
         ctx: Context<CreateCampaign>, 
+        name: String,
+        description: String,
+        image_link: String,
+        website_link: String,
+        contact_link: String,
         goal: u64
     ) -> Result<()> {
         let fundraiser_config = &mut ctx.accounts.fundraiser_config;
@@ -26,6 +31,11 @@ pub mod mobius_protocol_pl {
         fundraiser_config.sol_qty = 0;
         fundraiser_config.fundraiser_token_account = ctx.accounts.fundraiser_token_account.key();
         fundraiser_config.goal = goal;
+        fundraiser_config.name = name;
+        fundraiser_config.description = description;
+        fundraiser_config.image_link = image_link;
+        fundraiser_config.website_link = website_link;
+        fundraiser_config.contact_link = contact_link;
         Ok(())
     }
 
