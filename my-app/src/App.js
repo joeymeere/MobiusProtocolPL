@@ -9,7 +9,6 @@ import { Program, Provider, web3 } from '@project-serum/anchor';
 import Header from './components/Header';
 import Card from './components/Card';
 import Form from './components/Form';
-import { getAllCampaigns, getWithdrawalData } from "./solana";
 import { PhantomWalletAdapter } from '@solana/wallet-adapter-wallets';
 import { useWallet, WalletProvider, ConnectionProvider } from '@solana/wallet-adapter-react';
 import { WalletModalProvider, WalletMultiButton } from '@solana/wallet-adapter-react-ui';
@@ -35,19 +34,16 @@ const opts = {
   preflightCommitment: "confirmed"
 }
 
-const donator = Keypair.generate();
 
 export async function createCampaign(amount) {
-
 
   window.Buffer = Buffer;
   const provider = getProvider();
   const program = new Program(idl, programID, provider);
-  const { writingAccount, bump } = await getProgramDerivedCampainWritingAccountAddress();
 
   // step 1 : pass in accounts created at the start 
   await th.methods
-    .createFundraiser(amount)
+    .createFundraiser(new BN(amount))
     .accounts({
       fundraiserConfig: fundraiserConfig.publicKey,
       fundraiser: fundraiser.publicKey,
@@ -68,7 +64,6 @@ export async function joinCampaign() {
   window.Buffer = Buffer;
   const provider = getProvider();
   const program = new Program(idl, programID, provider);
-  const { donatorProgramAccount, bump } = await getProgramDerivedCampainDonatorProgramAccountAddress();
 
   await th.methods
     .joinFundraiser()
@@ -85,15 +80,14 @@ export async function joinCampaign() {
 }
 
 
-export async function donateToCampaign(campaignPubKey, amount) {
+export async function donateToCampaign(amount) {
 
   window.Buffer = Buffer;
   const provider = getProvider();
   const program = new Program(idl, programID, provider);
-  const { donatorProgramAccount, bump } = await getProgramDerivedCampainDonatorProgramAccountAddress();
 
   await th.methods
-    .stdContribute(new BN(10))
+    .stdContribute(new BN(amount))
     .accounts({
       contributorConfig: contributorConfig.publicKey,
       fundraiserConfig: fundraiserConfig.publicKey,
@@ -111,20 +105,20 @@ export async function donateToCampaign(campaignPubKey, amount) {
 
 }
 
-alert("Your Donation transaction signature", donateTx);
-let account = await program.account.donatorProgramAccount.fetch(donatorProgramAccount);
-console.log("👀 Created a New Donator Program Account : ", account);
-alert("Donation Successful");
-}
+// alert("Your Donation transaction signature", donateTx);
+// let account = await program.account.donatorProgramAccount.fetch(donatorProgramAccount);
+// console.log("👀 Created a New Donator Program Account : ", account);
+// alert("Donation Successful");
+// }
 
 
-export async function withdraw(campaignPubKey, amount) {
+export async function withdraw(amount) {
 
   window.Buffer = Buffer;
   const provider = getProvider();
   const program = new Program(idl, programID, provider);
   await th.methods
-    .fundraiserWithdrawal(new BN(10))
+    .fundraiserWithdrawal(new BN(amount))
     .accounts({
       fundraiserConfig: fundraiserConfig.publicKey,
       tokenVault: solTokenVault,
@@ -137,12 +131,6 @@ export async function withdraw(campaignPubKey, amount) {
     .signers([])
     .rpc()
     .catch(console.error);
-}
-
-let withdrawalData = await getWithdrawalData();
-console.log(withdrawalData);
-console.log("New Withdrawal Successful ! Initiated by : ", provider.wallet.publicKey);
-
 }
 
 
